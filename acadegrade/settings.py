@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-jq(!^$j0-2mm27#&g8m7v9av2bc=lpgovk#iw+qlgqh6*lwd(#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["acadegrade.onrender.com"]
 
 
 # Application definition
