@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Contact | AcadeGrade{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h1 class="text-center mb-4">Contact Us</h1>
+  <p class="text-center text-muted">
+    Have questions? Fill out the form below:
+  </p>
+
+  <!-- Contact Form -->
+  <form method="POST" class="mx-auto" style="max-width: 600px;">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="name" class="form-label">Your Name</label>
+      <input type="text" id="name" name="name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Your Email</label>
+      <input type="email" id="email" name="email" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="message" class="form-label">Message</label>
+      <textarea id="message" name="message" rows="4" class="form-control" required></textarea>
+    </div>
+    <button type="submit" id="sendBtn" class="btn btn-primary">
+      <span id="btnText">Send</span>
+      <span id="btnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+    </button>
+  </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector("form");
+  const sendBtn = document.getElementById("sendBtn");
+  const btnText = document.getElementById("btnText");
+  const btnSpinner = document.getElementById("btnSpinner");
+
+  form.addEventListener("submit", () => {
+    btnText.textContent = "Sending...";
+    btnSpinner.classList.remove("d-none");
+    sendBtn.disabled = true; // Prevent multiple clicks
+  });
+});
+</script>
+
+
+<!-- ✅ Toast Notification -->
+<!-- ✅ Toast Container -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050;">
+  
+  <!-- Success Toast -->
+  <div id="toastSuccess" class="toast align-items-center text-bg-success border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body">
+        ✅ Thank you {{ name }}, your message has been sent successfully!
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+
+  <!-- Error Toast -->
+  <div id="toastError" class="toast align-items-center text-bg-danger border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body">
+        ❌ Oops! Something went wrong. Please try again later.
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+
+</div>
+
+{% if status == "success" %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toast = new bootstrap.Toast(document.getElementById("toastSuccess"));
+    toast.show();
+
+    // Reset form after success
+    document.querySelector("form").reset();
+
+    // Reset button text & spinner
+    const sendBtn = document.getElementById("sendBtn");
+    const btnText = document.getElementById("btnText");
+    const btnSpinner = document.getElementById("btnSpinner");
+
+    btnText.textContent = "Send";
+    btnSpinner.classList.add("d-none");
+    sendBtn.disabled = false;
+  });
+</script>
+{% elif status == "error" %}
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toast = new bootstrap.Toast(document.getElementById("toastError"));
+    toast.show();
+  });
+</script>
+{% endif %}
+
+{% endblock %}

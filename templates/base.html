@@ -1,0 +1,416 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}AcadeGrade{% endblock %}</title>
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- AOS CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+
+  <!-- ====== HEADER ====== -->
+    <!-- Enhanced navbar with modern styling and improved structure -->
+    <header class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <!-- Brand -->
+            <a class="navbar-brand d-flex align-items-center" href="/">
+            <i class="bi bi-mortarboard-fill me-2"></i> AcadeGrade
+            </a>
+
+            <!-- Mobile Get Started Button -->
+            <button class="btn btn-primary d-lg-none ms-auto" data-bs-toggle="modal" data-bs-target="#authModal">
+            Get Started
+            </button>
+
+            <!-- Toggler for Offcanvas -->
+            <button class="navbar-toggler d-lg-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Desktop Nav -->
+            <div class="collapse navbar-collapse justify-content-center d-none d-lg-flex">
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="#calculator">Quick Calculator</a></li>
+                <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about/">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact/">Contact</a></li>
+            </ul>
+            </div>
+
+            <!-- 🔹 Placeholder for Dynamic Auth Buttons -->
+            <div class="auth-buttons d-none d-lg-flex ms-auto"></div>
+        </div>
+    </header>
+
+    <!-- Enhanced offcanvas with better styling -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title"><i class="bi bi-mortarboard-fill me-2" style="color: var(--primary-color);"></i> AcadeGrade</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="#calculator" data-bs-dismiss="offcanvas">Quick Calculator</a></li>
+            <li class="nav-item"><a class="nav-link" href="#features" data-bs-dismiss="offcanvas">Features</a></li>
+            <li class="nav-item"><a class="nav-link" href="/about/" data-bs-dismiss="offcanvas">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="/contact/" data-bs-dismiss="offcanvas">Contact</a></li>
+            </ul>
+            <hr>
+            <!-- 🔹 Placeholder for Dynamic Mobile Auth Buttons -->
+            <div class="auth-buttons-mobile mt-3"></div>
+        </div>
+    </div>
+
+
+  <!-- ========== AUTH MODAL ========== -->
+    <!-- Enhanced modal with modern styling and improved form design -->
+    <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Welcome to AcadeGrade</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <!-- Nav Tabs -->
+                    <ul class="nav nav-tabs mb-3" id="authTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button">Sign In</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="signup-tab" data-bs-toggle="tab" data-bs-target="#signup" type="button">Sign Up</button>
+                    </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Sign In -->
+                        <div class="tab-pane fade show active" id="login" role="tabpanel">
+                            <form id="loginForm">
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" id="loginEmail" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" id="loginPassword" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mb-3">Sign In</button>
+                            <div class="text-center mb-3">
+                                <span class="text-muted">or</span>
+                            </div>
+                            <button type="button" id="googleLogin" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-google me-2"></i> Continue with Google
+                            </button>
+                            </form>
+                        </div>
+
+                        <!-- Sign Up -->
+                        <div class="tab-pane fade" id="signup" role="tabpanel">
+                            <form id="signupForm">
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+                                <input type="text" id="signupName" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" id="signupEmail" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" id="signupPassword" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-secondary w-100">Create Account</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+  <!-- ====== MAIN CONTENT ====== -->
+  <main class="container py-5">
+    {% block content %}
+    
+    {% endblock %}
+  </main>
+
+    <!-- Enhanced toast notifications with modern styling -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050">
+        <div id="resultToast" class="toast align-items-center border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">Your CGPA is calculated!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+  <div id="globalToast" class="toast align-items-center border-0 text-bg-primary" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="toastMessage">Placeholder</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile } 
+    from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+  // Firebase config (from your .env but for now you can hardcode)
+  const firebaseConfig = {
+  apiKey: "AIzaSyBRIvFHkF3JYHdpQXkllesEVgo1HwKXXu0",
+  authDomain: "acadegrade-01.firebaseapp.com",
+  databaseURL: "https://acadegrade-01-default-rtdb.firebaseio.com",
+  projectId: "acadegrade-01",
+  storageBucket: "acadegrade-01.firebasestorage.app",   // ✅ keep as-is
+  messagingSenderId: "412187422895",
+  appId: "1:412187422895:web:58ef3321060148dc3ae45a",
+  measurementId: "G-8ZMR7EC557"
+};
+
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  // Sign Up
+  document.getElementById("signupForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("signupName").value;
+    const email = document.getElementById("signupEmail").value;
+    const password = document.getElementById("signupPassword").value;
+
+    try {
+      // Create user
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: name });
+      showToast("✅ Account created successfully!", "success");
+      await syncUserToBackend(userCredential.user); // Sync with Django backend
+      bootstrap.Modal.getInstance(document.getElementById("authModal")).hide();
+    } catch (error) {
+      // Handle Errors
+      showToast("❌ " + error.message, "danger");
+    }
+  });
+
+  // Sign In
+  document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    try {
+      // Sign in user
+      const loginUser =await signInWithEmailAndPassword(auth, email, password);
+      showToast("✅ Signed in successfully!", "success");
+      await syncUserToBackend(loginUser.user); // Sync with Django backend
+      bootstrap.Modal.getInstance(document.getElementById("authModal")).hide();
+    } catch (error) {
+      showToast("❌ " + error.message, "danger");
+    }
+  });
+
+  // Google Login
+  document.getElementById("googleLogin")?.addEventListener("click", async () => {
+    try {
+      const googleUser = await signInWithPopup(auth, provider);
+      showToast("✅ Google login successful!", "success");
+      await syncUserToBackend(googleUser.user); // Sync with Django backend
+      bootstrap.Modal.getInstance(document.getElementById("authModal")).hide();
+    } catch (error) {
+      showToast("❌ " + error.message, "danger");
+    }
+  });
+
+  // Track auth state
+onAuthStateChanged(auth, (user) => {
+  const navDesktop = document.querySelector(".auth-buttons");
+  const navMobile = document.querySelector(".auth-buttons-mobile");
+  const footerLinks = document.querySelector(".auth-links-footer");
+
+  if (user) {
+    // 🔹 Make UID and user object globally available
+    window.currentUserUid = user.uid;
+    window.currentUser = user;
+
+    // ✅ Logged in state
+    const desktopHTML = `
+      <span class="me-2">👋 Hi, ${user.displayName || user.email}</span>
+      <a href="/dashboard/" class="btn btn-outline-primary btn-sm me-2">Dashboard</a>
+      <button class="btn btn-outline-danger btn-sm" id="logoutBtn">Logout</button>
+    `;
+    const mobileHTML = `
+      <a href="/dashboard/" class="btn btn-outline-primary w-100 mb-2">Dashboard</a>
+      <button class="btn btn-outline-danger w-100" id="logoutBtn">Logout</button>
+    `;
+    const footerHTML = `
+      <li><span class="text-light">👋 Hi, ${user.displayName || user.email}</span></li>
+      <li><a href="/dashboard/" class="text-decoration-none text-light">Dashboard</a></li>
+      <li><a href="#" id="logoutBtnFooter" class="text-decoration-none text-danger">Logout</a></li>
+    `;
+
+    if (navDesktop) navDesktop.innerHTML = desktopHTML;
+    if (navMobile) navMobile.innerHTML = mobileHTML;
+    if (footerLinks) footerLinks.innerHTML = footerHTML;
+
+    // Sign Out
+    const logoutBtns = document.querySelectorAll("#logoutBtn, #logoutBtnFooter");
+    logoutBtns.forEach(btn => {
+      btn.addEventListener("click", async () => {
+        await signOut(auth);
+        window.location.href = "/"; // ✅ redirect to home
+      });
+    });
+
+  } else {
+    // 🔹 Reset globals
+    window.currentUserUid = null;
+    window.currentUser = null;
+
+    // ❌ Logged out state
+    const desktopHTML = `
+      <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#authModal">Sign In</button>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#authModal">Sign Up</button>
+    `;
+    const mobileHTML = `
+      <button class="btn btn-outline-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#authModal">Sign In</button>
+      <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#authModal">Sign Up</button>
+    `;
+    const footerHTML = `
+      <li><a href="#" class="text-decoration-none text-light" data-bs-toggle="modal" data-bs-target="#authModal">Sign In</a></li>
+      <li><a href="#" class="text-decoration-none text-light" data-bs-toggle="modal" data-bs-target="#authModal">Sign Up</a></li>
+      <li><span class="text-muted">Dashboard (login required)</span></li>
+    `;
+
+    if (navDesktop) navDesktop.innerHTML = desktopHTML;
+    if (navMobile) navMobile.innerHTML = mobileHTML;
+    if (footerLinks) footerLinks.innerHTML = footerHTML;
+  }
+});
+
+
+  // 🔹 After successful signup or login
+  // Function to sync user with Django backend
+  async function syncUserToBackend(user) {
+    try {
+      const idToken = await user.getIdToken(); // 🔑 Secure token from Firebase
+
+      await fetch("/sync-user/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + idToken  // 🔹 Pass token in headers
+        },
+        body: JSON.stringify({
+          uid: user.uid,  // still send UID, but backend will verify
+          name: user.displayName || "",
+          email: user.email,
+        }),
+      });
+
+      showToast("✅ Synced user with backend", "success");
+    } catch (err) {
+      console.error("❌ Failed to sync user:", err);
+      showToast("❌ Failed to sync user: " + err.message, "danger");
+    }
+  }
+
+
+   function showToast(message, type = "primary") {
+    const toastEl = document.getElementById("globalToast");
+    const toastBody = document.getElementById("toastMessage");
+
+    // Change color by type
+    toastEl.className = `toast align-items-center border-0 text-bg-${type}`;
+    toastBody.textContent = message;
+
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+  }
+
+
+
+</script>
+
+
+    <!-- ====== FOOTER ====== -->
+    <!-- Enhanced footer with modern styling and improved layout -->
+    <footer class="footer bg-dark text-light pt-5 pb-3 mt-auto">
+        <div class="container">
+            <div class="row">
+            <!-- Logo + Description -->
+            <div class="col-md-4 mb-4">
+                <h5><i class="bi bi-mortarboard-fill me-2"></i> AcadeGrade</h5>
+                <p class="mb-3">The ultimate CGPA calculator and academic tracker for Nigerian university students. Track your progress, calculate your CGPA, and achieve your academic goals.</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-decoration-none"><i class="bi bi-facebook fs-5"></i></a>
+                    <a href="#" class="text-decoration-none"><i class="bi bi-twitter fs-5"></i></a>
+                    <a href="#" class="text-decoration-none"><i class="bi bi-instagram fs-5"></i></a>
+                    <a href="#" class="text-decoration-none"><i class="bi bi-linkedin fs-5"></i></a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="col-md-2 mb-4">
+                <h6>Quick Links</h6>
+                <ul class="list-unstyled">
+                <li class="mb-2"><a href="#calculator" class="text-decoration-none">Quick Calculator</a></li>
+                <li class="mb-2"><a href="#features" class="text-decoration-none">Features</a></li>
+                <li class="mb-2"><a href="/about/" class="text-decoration-none">About Us</a></li>
+                <li class="mb-2"><a href="/contact/" class="text-decoration-none">Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Account Links (Dynamic) -->
+            <div class="col-md-2 mb-4">
+                <h6>Account</h6>
+                <ul class="list-unstyled auth-links-footer">
+                <!-- 🔹 Will be replaced by JS -->
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-md-4 mb-4">
+                <h6>Contact</h6>
+                <div class="mb-2"><i class="bi bi-envelope me-2"></i> joshuaugwu89@gmail.com</div>
+                <div class="mb-2"><i class="bi bi-telephone me-2"></i> +234 816 178 0380</div>
+                <div class="mb-2"><i class="bi bi-geo-alt me-2"></i> Enugu State University of Science and Technology (ESUT)</div>
+            </div>
+            </div>
+            <hr class="border-light opacity-25">
+            <div class="text-center">
+                <p class="mb-0">© 2025 AcadeGrade. All rights reserved. Built with <i class="bi bi-heart-fill text-danger"></i> for Nigerian students</p>
+            </div>
+        </div>
+    </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="{% static 'js/script.js' %}"></script>
+    <!-- AOS JS -->
+    <!-- AOS JS -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  AOS.init({ duration: 1000, once: true });
+</script>
+</body>
+</html>

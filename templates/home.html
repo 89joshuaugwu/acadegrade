@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% block title %}Home | AcadeGrade{% endblock %}
+
+{% block content %}
+<!-- ===== HERO SECTION ===== -->
+<!-- Enhanced hero section with modern gradient background and improved typography -->
+<section class="hero-section" data-aos="fade-up">
+  <div class="container">
+    <div class="hero-content text-center">
+      <h1 class="hero-title">Calculate Your CGPA with <span class="text-gradient">Confidence</span></h1>
+      <p class="hero-subtitle">
+        The ultimate academic companion for Nigerian university students. Track your grades, 
+        calculate your CGPA, and monitor your academic progress with ease.
+      </p>
+
+      <!-- Buttons -->
+      <div class="d-flex justify-content-center gap-3 mb-5" data-aos="zoom-in" data-aos-delay="200">
+        <a href="#calculator" class="btn btn-primary btn-lg">
+          <i class="bi bi-calculator me-2"></i>
+          Try Quick Calculator
+        </a>
+        <button class="btn btn-outline-primary btn-lg" data-bs-toggle="modal" data-bs-target="#authModal">
+          <i class="bi bi-graph-up-arrow me-2"></i>
+          Get Started Free
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="row text-center">
+            <div class="col-4" data-aos="fade-up" data-aos-delay="300">
+              <div class="stat-number counter" data-target="5">0</div>
+              <div class="stat-label">Maximum CGPA</div>
+            </div>
+            <div class="col-4" data-aos="fade-up" data-aos-delay="400">
+              <div class="stat-number counter" data-target="100">0+</div>
+              <div class="stat-label">Universities Supported</div>
+            </div>
+            <div class="col-4" data-aos="fade-up" data-aos-delay="500">
+              <div class="stat-number counter" data-target="1000">0+</div>
+              <div class="stat-label">Students Helped</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== QUICK CALCULATOR ===== -->
+<!-- Enhanced calculator section with modern card design and improved layout -->
+<section class="py-5" id="calculator">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <h2 class="calculator-title">Quick CGPA Calculator</h2>
+      <p class="text-muted">
+        Calculate your CGPA instantly without creating an account. Perfect for quick checks and planning.
+      </p>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="cgpa-calculator" data-aos="zoom-in">
+          <div class="calculator-header">
+            <h5><i class="bi bi-calculator me-2"></i> Enter Your Course Details</h5>
+            <p class="text-muted mb-0">Add your courses with their credit units and scores to calculate your CGPA.</p>
+          </div>
+
+          <div id="course-list" class="mb-4"></div>
+          
+          <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <button id="add-course" class="btn btn-outline-primary">
+              <i class="bi bi-plus-circle me-2"></i>Add Course
+            </button>
+            <button id="calculate-cgpa" class="btn btn-secondary">
+              <i class="bi bi-calculator me-2"></i>Calculate CGPA
+            </button>
+          </div>
+
+          <div id="cgpa-result" class="mt-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<!-- Enhanced features section with modern card design and improved icons -->
+<section id="features" class="py-5 bg-light">
+  <div class="container">
+    <div class="text-center mb-5" data-aos="fade-up">
+      <h2>Why Choose <span class="text-gradient">AcadeGrade</span>?</h2>
+      <p class="text-muted">
+        Designed specifically for Nigerian students with features that matter most for academic success.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Each Feature Box -->
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="bi bi-calculator"></i>
+          </div>
+          <h5 class="feature-title">Quick Calculator</h5>
+          <p class="feature-description">Calculate your CGPA instantly without creating an account. Perfect for quick academic planning.</p>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="bi bi-people-fill"></i>
+          </div>
+          <h5 class="feature-title">Multiple Profiles</h5>
+          <p class="feature-description">Track CGPA for yourself, friends, or family with multiple result sheets and profiles.</p>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="bi bi-graph-up-arrow"></i>
+          </div>
+          <h5 class="feature-title">Progress Tracking</h5>
+          <p class="feature-description">Monitor your academic progress with detailed semester-by-semester breakdowns and analytics.</p>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="400">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="bi bi-shield-lock-fill"></i>
+          </div>
+          <h5 class="feature-title">Secure & Private</h5>
+          <p class="feature-description">Your academic data is encrypted and secure. We never share your information with third parties.</p>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="500">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="bi bi-clock-history"></i>
+          </div>
+          <h5 class="feature-title">Real-time Updates</h5>
+          <p class="feature-description">Update your grades as results are released and see CGPA changes instantly with live calculations.</p>
+        </div>
+      </div>
+      
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="600">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+          </div>
+          <h5 class="feature-title">Nigerian System</h5>
+          <p class="feature-description">Built specifically for Nigerian universities with proper grading systems and credit unit calculations.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS SECTION ===== -->
+<!-- Added new stats section with dark background for visual contrast -->
+<section class="stats-section">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="stat-item">
+          <span class="stat-number counter" data-target="2500">0+</span>
+          <div class="stat-label">Active Students</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="stat-item">
+          <span class="stat-number counter" data-target="50000">0+</span>
+          <div class="stat-label">CGPA Calculations</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="300">
+        <div class="stat-item">
+          <span class="stat-number counter" data-target="150">0+</span>
+          <div class="stat-label">Universities</div>
+        </div>
+      </div>
+      <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="400">
+        <div class="stat-item">
+          <span class="stat-number">4.8</span>
+          <div class="stat-label">User Rating</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA SECTION ===== -->
+<!-- Added call-to-action section to encourage user registration -->
+<section class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 text-center" data-aos="zoom-in">
+        <div class="card border-0 shadow-lg p-5" style="background: var(--hero-gradient);">
+          <div class="card-body text-white">
+            <h3 class="mb-3">Ready to Take Control of Your Academic Journey?</h3>
+            <p class="mb-4">Join thousands of Nigerian students who trust AcadeGrade to track their academic progress and achieve their goals.</p>
+            <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#authModal">
+              <i class="bi bi-rocket-takeoff me-2"></i>Get Started Today
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
