@@ -17,7 +17,6 @@ Including another URLconf
 
 from django.contrib import admin # Admin panel
 from django.urls import path # URL routing
-
 from acadegradecore import views
 
 urlpatterns = [
@@ -27,7 +26,6 @@ urlpatterns = [
     path("contact/", views.contact, name="contact"), # Contact page
     path("sync-user/", views.sync_user, name="sync_user"),  # 🔹 NEW: Import csrf_exempt to allow POST requests from external clients
     path("dashboard/", views.dashboard, name="dashboard"), # User dashboard
-    path("firebase_login_sync/", views.firebase_login_sync, name="firebase_login_sync"), # Firebase login sync
 
     # API endpoints
     path("api/create-sheet/", views.create_sheet, name="create_sheet"),
