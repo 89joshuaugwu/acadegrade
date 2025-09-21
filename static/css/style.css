@@ -676,8 +676,7 @@ h6 {
 .stat-label {
   font-size: 1.1rem;
   font-weight: 500;
-  color: var(--white);
-  opacity: 0.9;
+  color: #212529;
 }
 
 /* Footer styles */
@@ -1236,4 +1235,11 @@ h6 {
     animation: none;
     background: #f0f0f0;
   }
+}
+
+
+
+.stat-label {
+  color: #212529; /* Bootstrap text-dark */
+  font-weight: 500;
 }
