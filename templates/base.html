@@ -274,7 +274,10 @@ onAuthStateChanged(auth, (user) => {
     // 🔹 Make UID and user object globally available
     window.currentUserUid = user.uid;
     window.currentUser = user;
-
+    // If we just logged in, redirect to dashboard
+    if (window.location.pathname !== "/dashboard/") {
+      window.location.href = "/dashboard/";
+    }
     // ✅ Logged in state
     const desktopHTML = `
       <span class="me-2">👋 Hi, ${user.displayName || user.email}</span>
@@ -348,7 +351,6 @@ onAuthStateChanged(auth, (user) => {
       const result = await resp.json();
       if (result.success) {
         showToast("✅ Synced & logged in! Redirecting...", "success");
-        window.location.href = result.redirect || "/dashboard/";
       } else {
         showToast("❌ Sync/login failed: " + (result.error || "Unknown error"), "danger");
       }
