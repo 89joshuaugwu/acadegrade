@@ -27,6 +27,9 @@ urlpatterns = [
     path("sync-user/", views.sync_user, name="sync_user"),  # 🔹 NEW: Import csrf_exempt to allow POST requests from external clients
     path("dashboard/", views.dashboard, name="dashboard"), # User dashboard
 
+    # Firebase login sync endpoint
+    path("firebase-login-sync/", views.firebase_login_sync, name="firebase_login_sync"),
+
     # API endpoints
     path("api/create-sheet/", views.create_sheet, name="create_sheet"),
     path("api/delete-sheet/<int:sheet_id>/", views.delete_sheet, name="delete_sheet"),

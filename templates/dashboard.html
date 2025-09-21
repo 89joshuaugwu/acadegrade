@@ -5,120 +5,203 @@
 <div class="container py-4">
 
   <!-- Hero / Welcome -->
-  <div class="p-4 mb-4 rounded-4 text-white shadow-sm" 
-       style="background: linear-gradient(90deg, #0d6efd, #6610f2);" >
-    <h2 class="fw-bold">👋 Welcome back, <span id="userName">Student</span></h2>
-    <p class="mb-0">Track, calculate, and manage your CGPA across semesters and years effortlessly.</p>
+  <div class="card border-0 rounded-4 shadow-lg mb-4" style="background: var(--primary-gradient);">
+    <div class="card-body p-4 text-white">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="flex-grow-1">
+          <h2 class="fw-bold mb-2">
+            <i class="bi bi-person-circle me-2"></i>
+            Welcome back, <span id="userName">Student</span>
+          </h2>
+          <p class="mb-0 opacity-90">Track, calculate, and manage your CGPA across semesters and years effortlessly.</p>
+        </div>
+        <div class="d-none d-lg-block">
+          <i class="bi bi-mortarboard-fill" style="font-size: 3rem; opacity: 0.3;"></i>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Quick Stats -->
-  <div class="row text-center mb-4" id="quickStats">
-    <div class="col-md-4 mb-3" data-aos="fade-up">
-      <div class="card shadow-sm h-100 border-0 rounded-3">
-        <div class="card-body">
-          <h6 class="text-muted">Total Sheets</h6>
-          <h3 class="fw-bold" id="statTotalSheets">0</h3>
+  <div class="row mb-4" id="quickStats">
+    <div class="col-12 col-md-4 mb-3" data-aos="fade-up">
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--info);">
+          <i class="bi bi-journal-text"></i>
+        </div>
+        <div class="stat-value text-primary" id="statTotalSheets">
+          <div class="loading-skeleton" style="width: 40px; height: 32px; margin: 0 auto;"></div>
+        </div>
+        <div class="stat-label">Total Sheets</div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4 mb-3" data-aos="fade-up" data-aos-delay="100">
+      <div class="stat-card text-center">
+        <div class="cgpa-circle mx-auto" id="avgCgpaCircle">
+          <svg viewBox="0 0 100 100">
+            <circle class="circle-bg" cx="50" cy="50" r="42"></circle>
+            <circle class="circle-progress" cx="50" cy="50" r="42" 
+                    stroke-dasharray="0 264" id="avgCgpaProgress"></circle>
+          </svg>
+          <div class="circle-text">
+            <div class="stat-value text-success" id="statAvgCgpa">
+              <div class="loading-skeleton" style="width: 30px; height: 24px; margin: 0 auto;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="stat-label mt-2">Average CGPA</div>
+        <div class="cgpa-indicator mt-2" id="avgCgpaIndicator" style="display: none;">
+          <i class="bi bi-circle-fill"></i>
+          <span id="avgCgpaStatus">-</span>
         </div>
       </div>
     </div>
-    <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="100">
-      <div class="card shadow-sm h-100 border-0 rounded-3">
-        <div class="card-body">
-          <h6 class="text-muted">Average CGPA</h6>
-          <h3 class="fw-bold text-success" id="statAvgCgpa">-</h3>
+    <div class="col-12 col-md-4 mb-3" data-aos="fade-up" data-aos-delay="200">
+      <div class="stat-card text-center">
+        <div class="cgpa-circle mx-auto" id="bestCgpaCircle">
+          <svg viewBox="0 0 100 100">
+            <circle class="circle-bg" cx="50" cy="50" r="42"></circle>
+            <circle class="circle-progress" cx="50" cy="50" r="42" 
+                    stroke-dasharray="0 264" id="bestCgpaProgress"></circle>
+          </svg>
+          <div class="circle-text">
+            <div class="stat-value" style="color: var(--secondary-color);" id="statBestCgpa">
+              <div class="loading-skeleton" style="width: 30px; height: 24px; margin: 0 auto;"></div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="200">
-      <div class="card shadow-sm h-100 border-0 rounded-3">
-        <div class="card-body">
-          <h6 class="text-muted">Best CGPA</h6>
-          <h3 class="fw-bold text-primary" id="statBestCgpa">-</h3>
+        <div class="stat-label mt-2">Best CGPA</div>
+        <div class="cgpa-indicator mt-2" id="bestCgpaIndicator" style="display: none;">
+          <i class="bi bi-trophy-fill"></i>
+          <span id="bestCgpaStatus">-</span>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Your Result Sheets</h3>
-    <div class="btn-group" role="group">
-      <!-- Print -->
+  <!-- Action Buttons -->
+  <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center mb-4 gap-3">
+    <h3 class="fw-bold mb-0">
+      <i class="bi bi-collection-fill me-2 text-primary"></i>
+      Your Result Sheets
+    </h3>
+    <div class="btn-group w-100 w-lg-auto" role="group">
       <button class="btn btn-outline-secondary" id="printBtn">
-        <i class="bi bi-printer me-1"></i> Print
+        <i class="bi bi-printer me-1"></i> 
+        <span class="d-none d-sm-inline">Print</span>
       </button>
-
-      <!-- Client-side PDF -->
       <button class="btn btn-outline-danger" id="pdfBtn">
-        <i class="bi bi-file-earmark-pdf me-1"></i> Client PDF
+        <i class="bi bi-file-earmark-pdf me-1"></i> 
+        <span class="d-none d-sm-inline">Client PDF</span>
       </button>
-
-      <!-- Server-side PDF (ReportLab) -->
       <a href="#" id="serverPdfBtn" class="btn btn-danger">
-          <i class="bi bi-download me-1"></i> Export (Server PDF)
+        <i class="bi bi-download me-1"></i> 
+        <span class="d-none d-sm-inline">Export PDF</span>
       </a>
-
-
-      <!-- Create New -->
       <button class="btn btn-primary" id="createSheetBtn">
-        + New Result Sheet
+        <span class="btn-loading d-none">
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          Creating...
+        </span>
+        <span class="btn-text">
+          <i class="bi bi-plus-circle me-1"></i> 
+          <span class="d-none d-sm-inline">New Result Sheet</span>
+          <span class="d-sm-none">New Sheet</span>
+        </span>
       </button>
     </div>
   </div>
-
-
-
 
   <!-- Result Sheets -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="fw-bold">📑 Your Result Sheets</h4>
   </div>
   <div id="sheetsList" class="row g-3">
-    <!-- JS will render cards here -->
+    <!-- Loading skeleton -->
+    <div class="col-12">
+      <div class="card border-0 rounded-4 shadow-sm p-4">
+        <div class="d-flex align-items-center">
+          <div class="loading-skeleton rounded-circle me-3" style="width: 48px; height: 48px;"></div>
+          <div class="flex-grow-1">
+            <div class="loading-skeleton mb-2" style="width: 60%; height: 20px;"></div>
+            <div class="loading-skeleton" style="width: 40%; height: 16px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Top Create Button -->
-  <button class="btn btn-primary" id="createSheetBtn">
-    + New Result Sheet
-  </button>
-
-  ...
-
   <!-- Floating Action Button -->
-  <button class="btn btn-primary rounded-circle shadow-lg position-fixed"
-          style="bottom: 30px; right: 30px; width: 60px; height: 60px; font-size: 1.5rem;"
-          id="fabCreateSheetBtn">
-    +
+  <button class="btn btn-primary rounded-circle shadow-lg position-fixed d-md-none"
+          style="bottom: 30px; right: 30px; width: 60px; height: 60px; font-size: 1.5rem; z-index: 1000;"
+          id="fabCreateSheetBtn"
+          title="Create New Result Sheet"
+          aria-label="Create New Result Sheet">
+    <i class="bi bi-plus"></i>
   </button>
-
-
 
 </div>
 
 <!-- Create Sheet Modal -->
-<div class="modal fade" id="createSheetModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content rounded-4 shadow-lg">
-      <form id="createSheetForm" class="p-3">
-        <h5 class="fw-bold mb-3">🎓 Create New Result Sheet</h5>
-        <div class="mb-2"><label class="form-label">Student Name</label><input name="student_name" class="form-control" required></div>
-        <div class="mb-2"><label class="form-label">University</label><input name="university" class="form-control"></div>
-        <div class="mb-2"><label class="form-label">Faculty</label><input name="faculty" class="form-control"></div>
-        <div class="mb-2"><label class="form-label">Department</label><input name="department" class="form-control"></div>
-        <div class="row g-2">
-          <div class="col"><label class="form-label">Years of Study</label><input name="years_of_study" type="number" value="4" class="form-control" required></div>
-          <div class="col"><label class="form-label">Semesters/Year</label><input name="semesters_per_year" type="number" value="2" class="form-control" required></div>
+<div class="modal fade" id="createSheetModal" tabindex="-1" aria-labelledby="createSheetModalLabel">
+  <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+    <div class="modal-content rounded-4 shadow-lg border-0">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="createSheetModalLabel">
+          <i class="bi bi-mortarboard me-2 text-primary"></i>
+          Create New Result Sheet
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="createSheetForm" class="modal-body pt-2">
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label fw-semibold">Student Name</label>
+            <input name="student_name" class="form-control" required autocomplete="name">
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">University</label>
+            <input name="university" class="form-control" autocomplete="organization">
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-semibold">Faculty</label>
+            <input name="faculty" class="form-control">
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-semibold">Department</label>
+            <input name="department" class="form-control">
+          </div>
+          <div class="col-6 col-md-6">
+            <label class="form-label fw-semibold">Years of Study</label>
+            <input name="years_of_study" type="number" value="4" class="form-control" required min="1" max="10">
+          </div>
+          <div class="col-6 col-md-6">
+            <label class="form-label fw-semibold">Semesters/Year</label>
+            <input name="semesters_per_year" type="number" value="2" class="form-control" required min="1" max="4">
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">Entry Year</label>
+            <input name="entry_year" class="form-control" placeholder="2021/2022">
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">Mode</label>
+            <select name="mode" class="form-select">
+              <option value="zeros">All zeros (Build up)</option>
+              <option value="available">Based on availability</option>
+            </select>
+          </div>
         </div>
-        <div class="mb-2 mt-2"><label class="form-label">Entry Year</label><input name="entry_year" class="form-control" placeholder="2021/2022"></div>
-        <div class="mb-2">
-          <label class="form-label">Mode</label>
-          <select name="mode" class="form-select">
-            <option value="zeros">All zeros (Build up)</option>
-            <option value="available">Based on availability</option>
-          </select>
-        </div>
-        <div class="text-end mt-3">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success">Create</button>
+        <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4">
+          <button type="button" class="btn btn-outline-secondary order-2 order-sm-1" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary order-1 order-sm-2" id="createSheetSubmitBtn">
+            <span class="btn-loading d-none">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Creating...
+            </span>
+            <span class="btn-text">
+              <i class="bi bi-check-circle me-1"></i> Create Sheet
+            </span>
+          </button>
         </div>
       </form>
     </div>
@@ -126,77 +209,174 @@
 </div>
 
 <!-- Edit Sheet Modal -->
-<div class="modal fade" id="editSheetModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content rounded-4 shadow-lg">
-      <form id="editSheetForm" class="p-3">
-        <h5 class="fw-bold mb-3">✏️ Edit Result Sheet</h5>
+<div class="modal fade" id="editSheetModal" tabindex="-1" aria-labelledby="editSheetModalLabel">
+  <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+    <div class="modal-content rounded-4 shadow-lg border-0">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="editSheetModalLabel">
+          <i class="bi bi-pencil-square me-2 text-primary"></i>
+          Edit Result Sheet
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="editSheetForm" class="modal-body pt-2">
         <input type="hidden" name="sheet_id" id="editSheetId">
-        <div class="mb-2"><label class="form-label">Student Name</label><input name="student_name" id="editStudentName" class="form-control" required></div>
-        <div class="mb-2"><label class="form-label">University</label><input name="university" id="editUniversity" class="form-control"></div>
-        <div class="mb-2"><label class="form-label">Faculty</label><input name="faculty" id="editFaculty" class="form-control"></div>
-        <div class="mb-2"><label class="form-label">Department</label><input name="department" id="editDepartment" class="form-control"></div>
-        <div class="mb-2"><label class="form-label">Entry Year</label><input name="entry_year" id="editEntryYear" class="form-control"></div>
-        <div class="mb-2">
-          <label class="form-label">Mode</label>
-          <select name="mode" id="editMode" class="form-select">
-            <option value="zeros">All zeros (Build up)</option>
-            <option value="available">Based on availability</option>
-          </select>
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label fw-semibold">Student Name</label>
+            <input name="student_name" id="editStudentName" class="form-control" required>
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">University</label>
+            <input name="university" id="editUniversity" class="form-control">
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-semibold">Faculty</label>
+            <input name="faculty" id="editFaculty" class="form-control">
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-semibold">Department</label>
+            <input name="department" id="editDepartment" class="form-control">
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">Entry Year</label>
+            <input name="entry_year" id="editEntryYear" class="form-control">
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">Mode</label>
+            <select name="mode" id="editMode" class="form-select">
+              <option value="zeros">All zeros (Build up)</option>
+              <option value="available">Based on availability</option>
+            </select>
+          </div>
         </div>
-        <div class="text-end mt-3">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success">Update</button>
+        <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4">
+          <button type="button" class="btn btn-outline-secondary order-2 order-sm-1" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary order-1 order-sm-2" id="editSheetSubmitBtn">
+            <span class="btn-loading d-none">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Updating...
+            </span>
+            <span class="btn-text">
+              <i class="bi bi-check-circle me-1"></i> Update Sheet
+            </span>
+          </button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
-
 <!-- Semester Modal -->
-<div class="modal fade" id="semesterModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content p-3 rounded-4">
-      <h5 id="semesterModalTitle" class="fw-bold mb-3">Semester</h5>
-      <div id="semesterCourses"></div>
-      <hr>
-      <form id="addCourseForm" class="row g-2">
-        <input type="hidden" name="semester_id" id="courseSemesterId">
-        <div class="col-3"><input name="code" class="form-control" placeholder="Code"></div>
-        <div class="col-4"><input name="title" class="form-control" placeholder="Course Title"></div>
-        <div class="col-1"><input name="credit_unit" type="number" class="form-control" value="3"></div>
-        <div class="col-2"><input name="incourse" type="number" class="form-control" value="0" placeholder="Incourse"></div>
-        <div class="col-2"><input name="exam" type="number" class="form-control" value="0" placeholder="Exam"></div>
-        <div class="col-12 text-end mt-2"><button class="btn btn-primary">+ Add Course</button></div>
-      </form>
+<div class="modal fade" id="semesterModal" tabindex="-1" aria-labelledby="semesterModalLabel">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-md-down">
+    <div class="modal-content rounded-4 shadow-lg border-0">
+      <div class="modal-header border-0 pb-0">
+        <h5 id="semesterModalTitle" class="modal-title fw-bold" id="semesterModalLabel">
+          <i class="bi bi-book me-2 text-primary"></i>
+          Semester Courses
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="semesterCourses" class="mb-4"></div>
+        <hr class="my-4">
+        <h6 class="fw-bold mb-3">
+          <i class="bi bi-plus-circle me-2 text-success"></i>
+          Add New Course
+        </h6>
+        <form id="addCourseForm">
+          <input type="hidden" name="semester_id" id="courseSemesterId">
+          <div class="row g-3">
+            <div class="col-12 col-md-3">
+              <label class="form-label fw-semibold">Code</label>
+              <input name="code" class="form-control" placeholder="CSC101" required>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label fw-semibold">Course Title</label>
+              <input name="title" class="form-control" placeholder="Introduction to Computing" required>
+            </div>
+            <div class="col-4 col-md-2">
+              <label class="form-label fw-semibold">Credit</label>
+              <input name="credit_unit" type="number" class="form-control" value="3" min="1" max="6" required>
+            </div>
+            <div class="col-4 col-md-1.5">
+              <label class="form-label fw-semibold">CA</label>
+              <input name="incourse" type="number" class="form-control" value="0" min="0" max="40" placeholder="30">
+            </div>
+            <div class="col-4 col-md-1.5">
+              <label class="form-label fw-semibold">Exam</label>
+              <input name="exam" type="number" class="form-control" value="0" min="0" max="70" placeholder="60">
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-success w-100 w-md-auto" id="addCourseSubmitBtn">
+                <span class="btn-loading d-none">
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Adding...
+                </span>
+                <span class="btn-text">
+                  <i class="bi bi-plus-circle me-1"></i> Add Course
+                </span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- Edit Course Modal -->
-<div class="modal fade" id="editCourseModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content rounded-4 shadow-lg">
-      <form id="editCourseForm" class="p-3">
-        <h5 class="fw-bold mb-3">✏️ Edit Course</h5>
+<div class="modal fade" id="editCourseModal" tabindex="-1" aria-labelledby="editCourseModalLabel">
+  <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+    <div class="modal-content rounded-4 shadow-lg border-0">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="editCourseModalLabel">
+          <i class="bi bi-pencil-square me-2 text-primary"></i>
+          Edit Course
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="editCourseForm" class="modal-body pt-2">
         <input type="hidden" name="course_id" id="editCourseId">
-        <div class="mb-2"><label class="form-label">Code</label><input name="code" id="editCode" class="form-control" required></div>
-        <div class="mb-2"><label class="form-label">Title</label><input name="title" id="editTitle" class="form-control"></div>
-        <div class="mb-2"><label class="form-label">Credit Unit</label><input type="number" name="credit_unit" id="editCredit" class="form-control" required></div>
-        <div class="row g-2">
-          <div class="col"><label class="form-label">Incourse</label><input type="number" name="incourse" id="editIncourse" class="form-control"></div>
-          <div class="col"><label class="form-label">Exam</label><input type="number" name="exam" id="editExam" class="form-control"></div>
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-semibold">Course Code</label>
+            <input name="code" id="editCode" class="form-control" required>
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label fw-semibold">Credit Unit</label>
+            <input type="number" name="credit_unit" id="editCredit" class="form-control" min="1" max="6" required>
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">Course Title</label>
+            <input name="title" id="editTitle" class="form-control" required>
+          </div>
+          <div class="col-6 col-md-6">
+            <label class="form-label fw-semibold">Continuous Assessment</label>
+            <input type="number" name="incourse" id="editIncourse" class="form-control" min="0" max="40">
+          </div>
+          <div class="col-6 col-md-6">
+            <label class="form-label fw-semibold">Examination</label>
+            <input type="number" name="exam" id="editExam" class="form-control" min="0" max="70">
+          </div>
         </div>
-        <div class="text-end mt-3">
-          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success">Update</button>
+        <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4">
+          <button type="button" class="btn btn-outline-secondary order-2 order-sm-1" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary order-1 order-sm-2" id="editCourseSubmitBtn">
+            <span class="btn-loading d-none">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Updating...
+            </span>
+            <span class="btn-text">
+              <i class="bi bi-check-circle me-1"></i> Update Course
+            </span>
+          </button>
         </div>
       </form>
     </div>
   </div>
 </div>
-
 
 <!-- Toast Container -->
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
@@ -210,13 +390,58 @@
   </div>
 </div>
 
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const createBtn = document.getElementById('createSheetBtn');
   const fabBtn = document.getElementById('fabCreateSheetBtn');
   const createModal = new bootstrap.Modal(document.getElementById('createSheetModal'));
   const createForm = document.getElementById('createSheetForm');
+
+  // ----------------- LOADING STATE HELPERS -----------------
+  function setButtonLoading(buttonId, loading = true) {
+    const button = document.getElementById(buttonId);
+    if (!button) return;
+    
+    const loadingSpan = button.querySelector('.btn-loading');
+    const textSpan = button.querySelector('.btn-text');
+    
+    if (loading) {
+      loadingSpan?.classList.remove('d-none');
+      textSpan?.classList.add('d-none');
+      button.disabled = true;
+    } else {
+      loadingSpan?.classList.add('d-none');
+      textSpan?.classList.remove('d-none');
+      button.disabled = false;
+    }
+  }
+
+  function showLoadingSkeleton() {
+    document.getElementById("sheetsList").innerHTML = `
+      <div class="col-12">
+        <div class="card border-0 rounded-4 shadow-sm p-4">
+          <div class="d-flex align-items-center">
+            <div class="loading-skeleton rounded-circle me-3" style="width: 48px; height: 48px;"></div>
+            <div class="flex-grow-1">
+              <div class="loading-skeleton mb-2" style="width: 60%; height: 20px;"></div>
+              <div class="loading-skeleton" style="width: 40%; height: 16px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="card border-0 rounded-4 shadow-sm p-4">
+          <div class="d-flex align-items-center">
+            <div class="loading-skeleton rounded-circle me-3" style="width: 48px; height: 48px;"></div>
+            <div class="flex-grow-1">
+              <div class="loading-skeleton mb-2" style="width: 70%; height: 20px;"></div>
+              <div class="loading-skeleton" style="width: 50%; height: 16px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
 
   // ----------------- CREATE SHEET -----------------
   [createBtn, fabBtn].forEach(btn => {
@@ -227,111 +452,257 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     if (!window.currentUserUid) return showToast('You must be signed in first.', 'warning');
 
+    setButtonLoading('createSheetSubmitBtn', true);
+
     const formData = new FormData(createForm);
     const payload = Object.fromEntries(formData.entries());
     payload.uid = window.currentUserUid;
 
-    const res = await fetch('/api/create-sheet/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if (data.status === 'ok') {
-      createModal.hide();
-      showToast('Sheet created successfully!', 'success');
-      loadSheets();
-    } else {
-      showToast('Error: ' + (data.error || 'unknown'), 'danger');
+    try {
+      const res = await fetch('/api/create-sheet/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      
+      if (data.status === 'ok') {
+        createModal.hide();
+        showToast('Sheet created successfully!', 'success');
+        createForm.reset();
+        loadSheets();
+      } else {
+        showToast('Error: ' + (data.error || 'unknown'), 'danger');
+      }
+    } catch (error) {
+      showToast('Network error. Please try again.', 'danger');
+    } finally {
+      setButtonLoading('createSheetSubmitBtn', false);
     }
   });
 
   // ----------------- LOAD SHEETS -----------------
   async function loadSheets() {
     if (!window.currentUserUid) {
-      document.getElementById("sheetsList").innerHTML = "<p class='text-muted'>Sign in to see your sheets.</p>";
-      return;
-    }
-
-    const res = await fetch(`/api/list-sheets/?uid=${window.currentUserUid}`);
-    const data = await res.json();
-
-    const container = document.getElementById("sheetsList");
-    container.innerHTML = "";
-
-    if (!data.sheets || data.sheets.length === 0) {
-      container.innerHTML = "<p class='text-muted'>No result sheets yet. Click <b>+ New Result Sheet</b> to start.</p>";
-      return;
-    }
-
-    data.sheets.forEach(sheet => {
-      const card = document.createElement("div");
-      card.className = "col-md-6";
-      const cgpaPercent = Math.min((sheet.cgpa / 5) * 100, 100);
-
-      card.innerHTML = `
-        <div class="card shadow-sm h-100 border-0 rounded-4" data-aos="fade-up">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h5 class="fw-bold mb-0"><i class="bi bi-journal-bookmark-fill text-primary me-2"></i> ${sheet.student_name}</h5>
-              <span class="badge bg-info text-dark">${sheet.mode === "zeros" ? "Build-up" : "Availability"}</span>
-            </div>
-            <p class="text-muted small mb-2">${sheet.university || ""}</p>
-
-            <div class="mb-2">
-              <span class="badge bg-secondary">📆 ${sheet.years_of_study} yrs</span>
-              <span class="badge bg-secondary">📚 ${sheet.semesters_per_year} sem/yr</span>
-              <span class="badge bg-secondary">🎓 Entry: ${sheet.entry_year}</span>
-            </div>
-
-            <p class="mb-1"><b>CGPA:</b> ${sheet.cgpa.toFixed(2)}</p>
-            <div class="progress mb-3" style="height: 8px;">
-              <div class="progress-bar ${sheet.cgpa >= 4 ? "bg-success" : sheet.cgpa >= 3 ? "bg-warning" : "bg-danger"}"
-                   role="progressbar" style="width: ${cgpaPercent}%"></div>
-            </div>
-
-            <div class="d-flex justify-content-between">
-              <button class="btn btn-sm btn-outline-primary viewSheetBtn" data-id="${sheet.id}">
-                <i class="bi bi-eye"></i> Open
-              </button>
-              <button class="btn btn-sm btn-outline-secondary editSheetBtn" data-id="${sheet.id}">
-                <i class="bi bi-pencil"></i> Edit
-              </button>
-              <button class="btn btn-sm btn-outline-danger deleteSheetBtn" data-id="${sheet.id}">
-                <i class="bi bi-trash"></i> Delete
-              </button>
-            </div>
+      document.getElementById("sheetsList").innerHTML = `
+        <div class="col-12">
+          <div class="card border-0 rounded-4 shadow-sm text-center p-4 p-md-5">
+            <i class="bi bi-person-x" style="font-size: 3rem; color: var(--medium-gray);"></i>
+            <h5 class="mt-3 text-muted">Sign in to see your sheets</h5>
+            <p class="text-muted">Please sign in to access your result sheets and CGPA calculations.</p>
           </div>
         </div>
       `;
-      container.appendChild(card);
-    });
+      return;
+    }
 
-    // DELETE
-    document.querySelectorAll(".deleteSheetBtn").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        if (!confirm("Are you sure you want to delete this sheet?")) return;
-        const id = btn.dataset.id;
-        const res = await fetch(`/api/delete-sheet/${id}/?uid=${window.currentUserUid}`, { method: "DELETE" });
-        const data = await res.json();
-        if (data.status === "ok") {
-          showToast("Sheet deleted successfully!", "success");
-          loadSheets();
-        } else {
-          showToast("Error deleting: " + data.error, "danger");
-        }
-      });
-    });
+    showLoadingSkeleton();
 
-    // VIEW
-    document.querySelectorAll(".viewSheetBtn").forEach(btn => {
-      btn.addEventListener("click", async () => {
-        const id = btn.dataset.id;
-        const res = await fetch(`/api/sheet/${id}/`);
-        const data = await res.json();
-        renderSheetDetail(data);
+    try {
+      const res = await fetch(`/api/list-sheets/?uid=${window.currentUserUid}`);
+      const data = await res.json();
+
+      const container = document.getElementById("sheetsList");
+      container.innerHTML = "";
+
+      if (!data.sheets || data.sheets.length === 0) {
+        container.innerHTML = `
+          <div class="col-12">
+            <div class="card border-0 rounded-4 shadow-sm text-center p-4 p-md-5">
+              <i class="bi bi-journal-plus" style="font-size: 3rem; color: var(--primary-color);"></i>
+              <h5 class="mt-3">No result sheets yet</h5>
+              <p class="text-muted mb-4">Get started by creating your first result sheet to track your academic progress.</p>
+              <button class="btn btn-primary" onclick="document.getElementById('createSheetBtn').click()">
+                <i class="bi bi-plus-circle me-1"></i> Create Your First Sheet
+              </button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const totalSheets = data.sheets.length;
+      const avgCgpa = data.sheets.reduce((sum, sheet) => sum + sheet.cgpa, 0) / totalSheets;
+      const bestCgpa = Math.max(...data.sheets.map(sheet => sheet.cgpa));
+
+      // Animate stats update
+      animateValue('statTotalSheets', 0, totalSheets, 1000);
+      animateValue('statAvgCgpa', 0, avgCgpa, 1000, 2);
+      animateValue('statBestCgpa', 0, bestCgpa, 1000, 2);
+
+      // Update circular progress indicators
+      setTimeout(() => {
+        updateCgpaCircle('avgCgpaCircle', 'avgCgpaProgress', avgCgpa);
+        updateCgpaCircle('bestCgpaCircle', 'bestCgpaProgress', bestCgpa);
+        updateCgpaIndicator('avgCgpaIndicator', 'avgCgpaStatus', avgCgpa);
+        updateCgpaIndicator('bestCgpaIndicator', 'bestCgpaStatus', bestCgpa);
+      }, 500);
+
+      data.sheets.forEach((sheet, index) => {
+        const card = document.createElement("div");
+        card.className = "col-12 col-md-6 col-lg-4";
+        const cgpaPercent = Math.min((sheet.cgpa / 5) * 100, 100);
+        const cgpaClass = getCgpaClass(sheet.cgpa);
+        
+        card.innerHTML = `
+          <div class="card h-100 border-0 rounded-4 shadow-sm hover-lift" data-aos="fade-up" data-aos-delay="${index * 100}">
+            <div class="card-body p-3 p-md-4">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="flex-grow-1 me-2">
+                  <h5 class="fw-bold mb-1">
+                    <i class="bi bi-person-badge me-2 text-primary"></i>
+                    <span class="d-inline d-md-none">${sheet.student_name.split(' ')[0]}</span>
+                    <span class="d-none d-md-inline">${sheet.student_name}</span>
+                  </h5>
+                  <p class="text-muted small mb-0">${sheet.university || "University not specified"}</p>
+                </div>
+                <span class="badge ${sheet.mode === "zeros" ? "bg-info" : "bg-success"} rounded-pill">
+                  <span class="d-none d-sm-inline">${sheet.mode === "zeros" ? "Build-up" : "Available"}</span>
+                  <span class="d-sm-none">${sheet.mode === "zeros" ? "Build" : "Avail"}</span>
+                </span>
+              </div>
+
+              <div class="mb-3">
+                <div class="d-flex flex-wrap gap-1">
+                  <span class="badge bg-light text-dark border">
+                    <i class="bi bi-calendar3 me-1"></i>
+                    <span class="d-none d-sm-inline">${sheet.years_of_study} years</span>
+                    <span class="d-sm-none">${sheet.years_of_study}y</span>
+                  </span>
+                  <span class="badge bg-light text-dark border">
+                    <i class="bi bi-book me-1"></i>
+                    <span class="d-none d-sm-inline">${sheet.semesters_per_year} sem/yr</span>
+                    <span class="d-sm-none">${sheet.semesters_per_year}s/y</span>
+                  </span>
+                  <span class="badge bg-light text-dark border">
+                    <i class="bi bi-mortarboard me-1"></i>${sheet.entry_year}
+                  </span>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span class="fw-semibold">CGPA</span>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="fw-bold fs-5 ${sheet.cgpa >= 4.5 ? "text-success" : sheet.cgpa >= 3.5 ? "text-primary" : sheet.cgpa >= 2.5 ? "text-warning" : "text-danger"}">
+                      ${sheet.cgpa.toFixed(2)}
+                    </span>
+                    <span class="cgpa-indicator ${cgpaClass} d-none d-sm-inline-flex" style="font-size: 0.75rem; padding: 0.125rem 0.5rem;">
+                      ${getCgpaStatus(sheet.cgpa)}
+                    </span>
+                  </div>
+                </div>
+                <div class="progress-enhanced">
+                  <div class="progress-bar ${sheet.cgpa >= 4.5 ? "bg-success" : sheet.cgpa >= 3.5 ? "bg-primary" : sheet.cgpa >= 2.5 ? "bg-warning" : "bg-danger"}"
+                       role="progressbar" style="width: ${cgpaPercent}%" aria-valuenow="${sheet.cgpa}" aria-valuemin="0" aria-valuemax="5"></div>
+                </div>
+                <div class="d-flex justify-content-between mt-1">
+                  <small class="text-muted">0.0</small>
+                  <small class="text-muted">5.0</small>
+                </div>
+              </div>
+
+              <div class="d-flex gap-1 gap-md-2">
+                <button class="btn btn-outline-primary btn-sm flex-fill viewSheetBtn" data-id="${sheet.id}">
+                  <i class="bi bi-eye me-1"></i> 
+                  <span class="d-none d-sm-inline">View</span>
+                </button>
+                <button class="btn btn-outline-secondary btn-sm editSheetBtn" data-id="${sheet.id}" title="Edit Sheet">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-outline-danger btn-sm deleteSheetBtn" data-id="${sheet.id}" title="Delete Sheet">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
       });
-    });
+
+      // DELETE
+      document.querySelectorAll(".deleteSheetBtn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          if (!confirm("Are you sure you want to delete this sheet?")) return;
+          
+          const originalContent = btn.innerHTML;
+          btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+          btn.disabled = true;
+          
+          try {
+            const id = btn.dataset.id;
+            const res = await fetch(`/api/delete-sheet/${id}/?uid=${window.currentUserUid}`, { method: "DELETE" });
+            const data = await res.json();
+            
+            if (data.status === "ok") {
+              showToast("Sheet deleted successfully!", "success");
+              loadSheets();
+            } else {
+              showToast("Error deleting: " + data.error, "danger");
+            }
+          } catch (error) {
+            showToast("Network error. Please try again.", "danger");
+          } finally {
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+          }
+        });
+      });
+
+      // VIEW
+      document.querySelectorAll(".viewSheetBtn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const originalContent = btn.innerHTML;
+          btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Loading...';
+          btn.disabled = true;
+          
+          try {
+            const id = btn.dataset.id;
+            const res = await fetch(`/api/sheet/${id}/`);
+            const data = await res.json();
+            renderSheetDetail(data);
+          } catch (error) {
+            showToast("Error loading sheet details.", "danger");
+          } finally {
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+          }
+        });
+      });
+
+    } catch (error) {
+      document.getElementById("sheetsList").innerHTML = `
+        <div class="col-12">
+          <div class="card border-0 rounded-4 shadow-sm text-center p-4 p-md-5">
+            <i class="bi bi-exclamation-triangle" style="font-size: 3rem; color: var(--warning);"></i>
+            <h5 class="mt-3 text-muted">Error loading sheets</h5>
+            <p class="text-muted mb-4">Please check your connection and try again.</p>
+            <button class="btn btn-primary" onclick="loadSheets()">
+              <i class="bi bi-arrow-clockwise me-1"></i> Retry
+            </button>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // ----------------- ANIMATION HELPERS -----------------
+  function animateValue(elementId, start, end, duration, decimals = 0) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    const range = end - start;
+    const increment = range / (duration / 16);
+    let current = start;
+    
+    const timer = setInterval(() => {
+      current += increment;
+      if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+        current = end;
+        clearInterval(timer);
+      }
+      element.textContent = decimals > 0 ? current.toFixed(decimals) : Math.floor(current);
+    }, 16);
   }
 
   // ----------------- RENDER SHEET DETAIL -----------------
@@ -342,58 +713,103 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderSheetDetail(sheet) {
     const container = document.getElementById("sheetsList");
+    
     container.innerHTML = `
-      <div class="card shadow-sm border-0 rounded-4 mb-4 p-3" data-aos="zoom-in">
-        <h4 class="fw-bold mb-1"><i class="bi bi-person-badge me-2 text-primary"></i> ${sheet.student_name}</h4>
-        <p class="text-muted small mb-2"><i class="bi bi-building me-2"></i>${sheet.university}</p>
-        <p><b>Total CGPA:</b> ${sheet.cgpa.toFixed(2)}</p>
+      <div class="col-12">
+        <div class="card border-0 rounded-4 shadow-lg mb-4" data-aos="zoom-in">
+          <div class="card-body p-3 p-md-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-3">
+              <div class="mb-3 mb-md-0">
+                <h4 class="fw-bold mb-1">
+                  <i class="bi bi-person-badge me-2 text-primary"></i>
+                  ${sheet.student_name}
+                </h4>
+                <p class="text-muted mb-2">
+                  <i class="bi bi-building me-2"></i>
+                  ${sheet.university || "University not specified"}
+                </p>
+              </div>
+              <div class="text-start text-md-end">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <span class="text-muted">Overall CGPA:</span>
+                  <span class="badge fs-6 px-3 py-2 ${sheet.cgpa >= 4.5 ? "bg-success" : sheet.cgpa >= 3.5 ? "bg-primary" : sheet.cgpa >= 2.5 ? "bg-warning" : "bg-danger"}">
+                    ${sheet.cgpa.toFixed(2)}
+                  </span>
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" onclick="loadSheets()">
+                  <i class="bi bi-arrow-left me-1"></i> Back to List
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     `;
 
     sheet.years.forEach((y, index) => {
       const yearCard = document.createElement("div");
-      yearCard.className = "accordion mb-3";
+      yearCard.className = "col-12 mb-3";
       yearCard.innerHTML = `
-        <div class="accordion-item rounded-3 shadow-sm border-0">
-          <h2 class="accordion-header" id="heading${index}">
-            <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}">
-              <i class="bi bi-calendar-check me-2 text-primary"></i> ${y.year_label}
-              <span class="badge ms-2 ${y.year_gpa >= 4 ? "bg-success" : y.year_gpa >= 3 ? "bg-warning" : "bg-danger"}">
+        <div class="card border-0 rounded-4 shadow-sm" data-aos="fade-up" data-aos-delay="${index * 100}">
+          <div class="card-header bg-transparent border-0 p-3 p-md-4">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+              <h5 class="fw-bold mb-0">
+                <i class="bi bi-calendar-check me-2 text-primary"></i>
+                ${y.year_label}
+              </h5>
+              <span class="badge fs-6 px-3 py-2 ${y.year_gpa >= 4.5 ? "bg-success" : y.year_gpa >= 3.5 ? "bg-primary" : y.year_gpa >= 2.5 ? "bg-warning" : "bg-danger"}">
                 GPA: ${y.year_gpa.toFixed(2)}
               </span>
-            </button>
-          </h2>
-          <div id="collapse${index}" class="accordion-collapse collapse ${index === 0 ? "show" : ""}">
-            <div class="accordion-body row g-3">
-              ${y.semesters.map(s => `
-                <div class="col-md-6">
-                  <div class="card h-100 border-0 shadow-sm rounded-3 p-3" data-aos="fade-up">
-                    <h6 class="fw-bold text-primary"><i class="bi bi-book-half me-2"></i>${s.label}</h6>
-                    <p class="mb-1"><b>GPA:</b> ${s.gpa.toFixed(2)}</p>
-                    <div class="progress mb-2" style="height: 6px;">
-                      <div class="progress-bar ${s.gpa >= 4 ? "bg-success" : s.gpa >= 3 ? "bg-warning" : "bg-danger"}"
-                           role="progressbar" style="width: ${(s.gpa/5)*100}%"></div>
+            </div>
+          </div>
+          <div class="card-body p-3 p-md-4 pt-0">
+            <div class="row g-3">
+              ${y.semesters.map((s, semIndex) => `
+                <div class="col-12 col-lg-6">
+                  <div class="card h-100 border rounded-3 shadow-sm" data-aos="fade-up" data-aos-delay="${(index * 200) + (semIndex * 100)}">
+                    <div class="card-body p-3">
+                      <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0 text-primary">
+                          <i class="bi bi-book-half me-2"></i>
+                          ${s.label}
+                        </h6>
+                        <span class="badge ${s.gpa >= 4.5 ? "bg-success" : s.gpa >= 3.5 ? "bg-primary" : s.gpa >= 2.5 ? "bg-warning" : s.gpa >= 1.5 ? "bg-secondary" : "bg-danger"}">
+                          ${s.gpa.toFixed(2)}
+                        </span>
+                      </div>
+                      
+                      <div class="progress mb-3" style="height: 6px;">
+                        <div class="progress-bar ${s.gpa >= 4.5 ? "bg-success" : s.gpa >= 3.5 ? "bg-primary" : s.gpa >= 2.5 ? "bg-warning" : s.gpa >= 1.5 ? "bg-secondary" : "bg-danger"}"
+                             role="progressbar" style="width: ${(s.gpa/5)*100}%" aria-valuenow="${s.gpa}" aria-valuemin="0" aria-valuemax="5"></div>
+                      </div>
+
+                      <div class="courses-list mb-3" style="max-height: 200px; overflow-y: auto;">
+                        ${s.courses.map(c => `
+                          <div class="d-flex justify-content-between align-items-start py-2 border-bottom">
+                            <div class="flex-grow-1 me-2">
+                              <div class="fw-semibold">${c.code}</div>
+                              <div class="small text-muted">${c.title}</div>
+                              <div class="small">
+                                <span class="badge bg-light text-dark">${c.credit_unit}u</span>
+                              </div>
+                            </div>
+                            <div class="text-end">
+                              <span class="badge ${c.grade === "A" ? "bg-success" : c.grade === "B" ? "bg-primary" : c.grade === "C" ? "bg-info" : c.grade === "D" ? "bg-warning" : c.grade === "E" ? "bg-secondary" : "bg-danger"}">
+                                ${c.grade}
+                              </span>
+                              <div class="small text-muted">${c.score}</div>
+                              <button class="btn btn-sm btn-outline-secondary ms-1 editCourseBtn" data-id="${c.id}" title="Edit Course">
+                                <i class="bi bi-pencil"></i>
+                              </button>
+                            </div>
+                          </div>
+                        `).join("")}
+                      </div>
+
+                      <button class="btn btn-sm btn-success w-100 addCourseBtn" data-id="${s.id}" data-label="${s.label}">
+                        <i class="bi bi-plus-circle me-1"></i> Add Course
+                      </button>
                     </div>
-                    <ul class="list-group list-group-flush small mb-2">
-                      ${s.courses.map(c => `
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                          <div>
-                            <span class="fw-bold">${c.code}</span> (${c.credit_unit}u) - ${c.title}
-                          </div>
-                          <div>
-                            <span class="badge bg-${c.grade === "A" ? "success" : c.grade === "B" ? "primary" : c.grade === "C" ? "info" : c.grade === "D" ? "warning" : c.grade === "E" ? "secondary" : "danger"}">
-                              ${c.grade} [${c.score}]
-                            </span>
-                            <button class="btn btn-sm btn-outline-secondary ms-2 editCourseBtn" data-id="${c.id}">
-                              <i class="bi bi-pencil"></i>
-                            </button>
-                          </div>
-                        </li>
-                      `).join("")}
-                    </ul>
-                    <button class="btn btn-sm btn-outline-success addCourseBtn" data-id="${s.id}" data-label="${s.label}">
-                      <i class="bi bi-plus-circle me-1"></i> Add Course
-                    </button>
                   </div>
                 </div>
               `).join("")}
@@ -421,103 +837,154 @@ document.addEventListener('DOMContentLoaded', () => {
   function attachEditCourseHandlers() {
     document.querySelectorAll(".editCourseBtn").forEach(btn => {
       btn.addEventListener("click", async () => {
-        const id = btn.dataset.id;
-        const res = await fetch(`/api/course/${id}/`);
-        const data = await res.json();
+        const originalContent = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+        btn.disabled = true;
+        
+        try {
+          const id = btn.dataset.id;
+          const res = await fetch(`/api/course/${id}/`);
+          const data = await res.json();
 
-        if (data.error) return showToast("Error: " + data.error, "danger");
+          if (data.error) {
+            showToast("Error: " + data.error, "danger");
+            return;
+          }
 
-        document.getElementById("editCourseId").value = id;
-        document.getElementById("editCode").value = data.code;
-        document.getElementById("editTitle").value = data.title;
-        document.getElementById("editCredit").value = data.credit_unit;
-        document.getElementById("editIncourse").value = data.incourse;
-        document.getElementById("editExam").value = data.exam;
+          document.getElementById("editCourseId").value = id;
+          document.getElementById("editCode").value = data.code;
+          document.getElementById("editTitle").value = data.title;
+          document.getElementById("editCredit").value = data.credit_unit;
+          document.getElementById("editIncourse").value = data.incourse;
+          document.getElementById("editExam").value = data.exam;
 
-        new bootstrap.Modal(document.getElementById("editCourseModal")).show();
+          new bootstrap.Modal(document.getElementById("editCourseModal")).show();
+        } catch (error) {
+          showToast("Error loading course details.", "danger");
+        } finally {
+          btn.innerHTML = originalContent;
+          btn.disabled = false;
+        }
       });
     });
   }
 
   document.getElementById("editCourseForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const payload = Object.fromEntries(new FormData(e.target).entries());
-    const id = payload.course_id;
-    delete payload.course_id;
+    setButtonLoading('editCourseSubmitBtn', true);
+    
+    try {
+      const payload = Object.fromEntries(new FormData(e.target).entries());
+      const id = payload.course_id;
+      delete payload.course_id;
 
-    const res = await fetch(`/api/update-course/${id}/`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
+      const res = await fetch(`/api/update-course/${id}/`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
 
-    if (data.status === "ok") {
-      bootstrap.Modal.getInstance(document.getElementById("editCourseModal")).hide();
-      showToast("Course updated successfully!", "success");
-      loadSheets();
-    } else {
-      showToast("Error updating course: " + data.error, "danger");
+      if (data.status === "ok") {
+        bootstrap.Modal.getInstance(document.getElementById("editCourseModal")).hide();
+        showToast("Course updated successfully!", "success");
+        loadSheets();
+      } else {
+        showToast("Error updating course: " + data.error, "danger");
+      }
+    } catch (error) {
+      showToast("Network error. Please try again.", "danger");
+    } finally {
+      setButtonLoading('editCourseSubmitBtn', false);
     }
   });
 
   // ----------------- EDIT SHEET -----------------
   document.addEventListener("click", async (e) => {
     if (e.target.closest(".editSheetBtn")) {
-      const id = e.target.closest(".editSheetBtn").dataset.id;
+      const btn = e.target.closest(".editSheetBtn");
+      const originalContent = btn.innerHTML;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+      btn.disabled = true;
+      
+      try {
+        const id = btn.dataset.id;
+        const res = await fetch(`/api/sheet/${id}/`);
+        const sheet = await res.json();
 
-      const res = await fetch(`/api/sheet/${id}/`);
-      const sheet = await res.json();
+        document.getElementById("editSheetId").value = sheet.id;
+        document.getElementById("editStudentName").value = sheet.student_name;
+        document.getElementById("editUniversity").value = sheet.university || "";
+        document.getElementById("editFaculty").value = sheet.faculty || "";
+        document.getElementById("editDepartment").value = sheet.department || "";
+        document.getElementById("editEntryYear").value = sheet.entry_year || "";
+        document.getElementById("editMode").value = sheet.mode;
 
-      document.getElementById("editSheetId").value = sheet.id;
-      document.getElementById("editStudentName").value = sheet.student_name;
-      document.getElementById("editUniversity").value = sheet.university || "";
-      document.getElementById("editFaculty").value = sheet.faculty || "";
-      document.getElementById("editDepartment").value = sheet.department || "";
-      document.getElementById("editEntryYear").value = sheet.entry_year || "";
-      document.getElementById("editMode").value = sheet.mode;
-
-      new bootstrap.Modal(document.getElementById("editSheetModal")).show();
+        new bootstrap.Modal(document.getElementById("editSheetModal")).show();
+      } catch (error) {
+        showToast("Error loading sheet details.", "danger");
+      } finally {
+        btn.innerHTML = originalContent;
+        btn.disabled = false;
+      }
     }
   });
 
   document.getElementById("editSheetForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const payload = Object.fromEntries(new FormData(e.target).entries());
-    const id = payload.sheet_id;
-    delete payload.sheet_id;
+    setButtonLoading('editSheetSubmitBtn', true);
+    
+    try {
+      const payload = Object.fromEntries(new FormData(e.target).entries());
+      const id = payload.sheet_id;
+      delete payload.sheet_id;
 
-    const res = await fetch(`/api/update-sheet/${id}/`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
+      const res = await fetch(`/api/update-sheet/${id}/`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
 
-    if (data.status === "ok") {
-      bootstrap.Modal.getInstance(document.getElementById("editSheetModal")).hide();
-      showToast("Sheet updated successfully!", "success");
-      loadSheets();
-    } else {
-      showToast("Error updating sheet: " + data.error, "danger");
+      if (data.status === "ok") {
+        bootstrap.Modal.getInstance(document.getElementById("editSheetModal")).hide();
+        showToast("Sheet updated successfully!", "success");
+        loadSheets();
+      } else {
+        showToast("Error updating sheet: " + data.error, "danger");
+      }
+    } catch (error) {
+      showToast("Network error. Please try again.", "danger");
+    } finally {
+      setButtonLoading('editSheetSubmitBtn', false);
     }
   });
 
   // ----------------- ADD COURSE -----------------
   document.getElementById('addCourseForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const payload = Object.fromEntries(new FormData(e.target).entries());
-    const res = await fetch('/api/add-course/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if (data.status === 'ok') {
-      showToast("Course added successfully!", "success");
-      loadSheets();
-    } else {
-      showToast("Error adding course: " + data.error, "danger");
+    setButtonLoading('addCourseSubmitBtn', true);
+    
+    try {
+      const payload = Object.fromEntries(new FormData(e.target).entries());
+      const res = await fetch('/api/add-course/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      
+      if (data.status === 'ok') {
+        showToast("Course added successfully!", "success");
+        e.target.reset();
+        loadSheets();
+      } else {
+        showToast("Error adding course: " + data.error, "danger");
+      }
+    } catch (error) {
+      showToast("Network error. Please try again.", "danger");
+    } finally {
+      setButtonLoading('addCourseSubmitBtn', false);
     }
   });
 
@@ -547,6 +1014,51 @@ function showToast(message, type = "primary") {
   toastBody.textContent = message;
   toastEl.className = `toast align-items-center text-bg-${type} border-0`;
   new bootstrap.Toast(toastEl).show();
+}
+
+function updateCgpaCircle(circleId, progressId, value, maxValue = 5) {
+  const circle = document.getElementById(circleId);
+  const progress = document.getElementById(progressId);
+  
+  if (!circle || !progress) return;
+  
+  const percentage = (value / maxValue) * 100;
+  const circumference = 2 * Math.PI * 42; // radius = 42
+  const strokeDasharray = (percentage / 100) * circumference;
+  
+  progress.style.strokeDasharray = `${strokeDasharray} ${circumference}`;
+  
+  // Apply color based on CGPA value
+  const cgpaClass = getCgpaClass(value);
+  circle.className = `cgpa-circle ${cgpaClass}`;
+}
+
+function getCgpaClass(cgpa) {
+  if (cgpa >= 4.5) return 'cgpa-excellent';
+  if (cgpa >= 3.5) return 'cgpa-good';
+  if (cgpa >= 2.5) return 'cgpa-average';
+  return 'cgpa-poor';
+}
+
+function getCgpaStatus(cgpa) {
+  if (cgpa >= 4.5) return 'Excellent';
+  if (cgpa >= 3.5) return 'Good';
+  if (cgpa >= 2.5) return 'Average';
+  return 'Needs Improvement';
+}
+
+function updateCgpaIndicator(indicatorId, statusId, cgpa) {
+  const indicator = document.getElementById(indicatorId);
+  const status = document.getElementById(statusId);
+  
+  if (!indicator || !status) return;
+  
+  const cgpaClass = getCgpaClass(cgpa);
+  const cgpaStatus = getCgpaStatus(cgpa);
+  
+  indicator.className = `cgpa-indicator ${cgpaClass}`;
+  indicator.style.display = 'inline-flex';
+  status.textContent = cgpaStatus;
 }
 </script>
 

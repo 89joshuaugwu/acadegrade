@@ -169,6 +169,52 @@ def sync_user(request):
 
     return JsonResponse({"error": "Invalid request"}, status=405)
 
+# Firebase login sync endpoint for Django session login
+@csrf_exempt
+def firebase_login_sync(request):
+    """
+    POST /firebase-login-sync/
+    Accepts: { idToken: <Firebase ID token> }
+    Verifies token, gets/creates Django user, logs in via session.
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+        id_token = data.get("idToken")
+        if not id_token:
+            return JsonResponse({"error": "Missing idToken"}, status=400)
+
+        decoded = None
+        try:
+            decoded = firebase_auth.verify_id_token(id_token)
+        except Exception as e:
+            print("❌ Firebase token verification failed:", e)
+            return JsonResponse({"error": "Invalid Firebase token"}, status=401)
+
+        uid = decoded.get("uid")
+        email = decoded.get("email")
+        name = decoded.get("name") or ""
+        if not uid or not email:
+            return JsonResponse({"error": "Missing uid or email in token"}, status=400)
+
+        # Get or create Django user
+        from django.contrib.auth import get_user_model, login
+        User = get_user_model()
+        user, created = User.objects.get_or_create(username=uid, defaults={"email": email, "first_name": name})
+
+        # Log in user via Django session
+        login(request, user)
+
+        # Optionally sync UserProfile
+        from .models import UserProfile
+        profile, _ = UserProfile.objects.update_or_create(uid=uid, defaults={"name": name, "email": email})
+
+        return JsonResponse({"success": True, "redirect": "/dashboard/"})
+    except Exception as e:
+        print("❌ firebase_login_sync error:", e)
+        return JsonResponse({"error": str(e)}, status=500)
 
 # Dashboard view (requires login)
 @login_required(login_url="/")
