@@ -443,7 +443,7 @@ h6 {
 }
 
 .stat-label {
-  color: var(--medium-gray);
+  color: #212529;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
