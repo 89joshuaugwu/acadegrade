@@ -207,9 +207,20 @@ def firebase_login_sync(request):
         # Log in user via Django session
         login(request, user)
 
-        # Optionally sync UserProfile
+        # Optionally sync UserProfile, handling unique email constraint
         from .models import UserProfile
-        profile, _ = UserProfile.objects.update_or_create(uid=uid, defaults={"name": name, "email": email})
+        try:
+            profile, _ = UserProfile.objects.update_or_create(uid=uid, defaults={"name": name, "email": email})
+        except Exception as e:
+            # If email already exists, update UID for that profile
+            try:
+                profile = UserProfile.objects.get(email=email)
+                profile.uid = uid
+                profile.name = name
+                profile.save()
+            except UserProfile.DoesNotExist:
+                # If not found, create new profile
+                profile = UserProfile.objects.create(uid=uid, name=name, email=email)
 
         return JsonResponse({"success": True, "redirect": "/dashboard/"})
     except Exception as e:
