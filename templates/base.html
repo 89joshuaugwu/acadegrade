@@ -277,6 +277,7 @@ onAuthStateChanged(auth, (user) => {
     // If we just logged in, redirect to dashboard
     if (window.location.pathname !== "/dashboard/") {
       window.location.href = "/dashboard/";
+      console.log("Current UID:", window.currentUserUid);
     }
     // ✅ Logged in state
     const desktopHTML = `

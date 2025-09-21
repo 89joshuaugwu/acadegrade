@@ -392,6 +392,18 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  // Wait for UID to be set before loading sheets
+  function waitForUidAndLoadSheets(retries = 20) {
+    if (window.currentUserUid) {
+      loadSheets();
+    } else if (retries > 0) {
+      setTimeout(() => waitForUidAndLoadSheets(retries - 1), 100);
+    } else {
+      showToast("User not authenticated. Please log in.", "danger");
+    }
+  }
+  waitForUidAndLoadSheets();
+
   console.log("Current UID:", window.currentUserUid);
   const createBtn = document.getElementById('createSheetBtn');
   const fabBtn = document.getElementById('fabCreateSheetBtn');
@@ -841,6 +853,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalContent = btn.innerHTML;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
         btn.disabled = true;
+        const payload = Object.fromEntries(new FormData(e.target).entries());
+        payload.uid = window.currentUserUid;
         
         try {
           const id = btn.dataset.id;
@@ -907,8 +921,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const originalContent = btn.innerHTML;
       btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
       btn.disabled = true;
-      
-      payload.uid = window.currentUserUid;
+
       try {
         const id = btn.dataset.id;
         const res = await fetch(`/api/sheet/${id}/`);
@@ -940,6 +953,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const payload = Object.fromEntries(new FormData(e.target).entries());
       const id = payload.sheet_id;
       delete payload.sheet_id;
+      // Ensure UID is sent in update payload
+      payload.uid = window.currentUserUid;
 
       const res = await fetch(`/api/update-sheet/${id}/`, {
         method: "PUT",
@@ -1005,17 +1020,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
- // Wait for UID to be set before loading sheets
-  function waitForUidAndLoadSheets(retries = 20) {
-    if (window.currentUserUid) {
-      loadSheets();
-    } else if (retries > 0) {
-      setTimeout(() => waitForUidAndLoadSheets(retries - 1), 100);
-    } else {
-      showToast("User not authenticated. Please log in.", "danger");
-    }
-  }
-  waitForUidAndLoadSheets();
+ 
 });
 
 // ----------------- TOAST HELPER -----------------
