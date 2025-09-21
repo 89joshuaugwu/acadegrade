@@ -431,6 +431,9 @@ document.addEventListener('DOMContentLoaded', () => {
                               <button class="btn btn-sm btn-outline-secondary ms-1 editCourseBtn" data-id="${c.id}" title="Edit Course">
                                 <i class="bi bi-pencil"></i>
                               </button>
+                              <button class="btn btn-sm btn-outline-danger ms-1 deleteCourseBtn" data-id="${c.id}" title="Delete Course">
+                                <i class="bi bi-trash"></i>
+                              </button>
                             </div>
                           </div>
                         `).join("")}
@@ -460,6 +463,32 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+        // DELETE COURSE
+    document.querySelectorAll('.deleteCourseBtn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Are you sure you want to delete this course?')) return;
+        const originalContent = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+        btn.disabled = true;
+        try {
+          const id = btn.dataset.id;
+          const res = await fetch(`/api/delete-course/${id}/?uid=${window.currentUserUid}`, { method: 'DELETE' });
+          const data = await res.json();
+          if (data.status === 'ok') {
+            showToast('Course deleted successfully!', 'success');
+            loadSheets();
+          } else {
+            showToast('Error deleting course: ' + data.error, 'danger');
+          }
+        } catch (error) {
+          showToast('Network error. Please try again.', 'danger');
+        } finally {
+          btn.innerHTML = originalContent;
+          btn.disabled = false;
+        }
+      });
+    });
+
     attachEditCourseHandlers();
   }
 
@@ -470,8 +499,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalContent = btn.innerHTML;
         btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
         btn.disabled = true;
-        const payload = Object.fromEntries(new FormData(e.target).entries());
-        payload.uid = window.currentUserUid;
+        // const payload = Object.fromEntries(new FormData(e.target).entries());
+        // payload.uid = window.currentUserUid;
         
         try {
           const id = btn.dataset.id;

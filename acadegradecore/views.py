@@ -254,6 +254,7 @@ def create_sheet(request):
 
     try:
         payload = json.loads(request.body)
+        print("[DEBUG] create_sheet payload:", payload)
         uid = payload.get("uid")
         owner = get_object_or_404(UserProfile, uid=uid)
 
@@ -311,6 +312,7 @@ def update_sheet(request, sheet_id):
 
     try:
         payload = json.loads(request.body)
+        print(f"[DEBUG] update_sheet payload for sheet_id={sheet_id}:", payload)
         uid = payload.get("uid")
         if not uid:
             return JsonResponse({"error": "uid required"}, status=400)
@@ -440,6 +442,29 @@ def update_course(request, course_id):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+# New: Delete course endpoint
+@csrf_exempt
+def delete_course(request, course_id):
+    """
+    DELETE /api/delete-course/<id>/?uid=<firebase_uid>
+    """
+    if request.method != "DELETE":
+        return JsonResponse({"error": "DELETE only"}, status=405)
+
+    uid = request.GET.get("uid")
+    if not uid:
+        return JsonResponse({"error": "uid required"}, status=400)
+
+    try:
+        course = Course.objects.get(id=course_id)
+        # Check ownership via course.semester.year.sheet.owner.uid
+        if course.semester.year.sheet.owner.uid != uid:
+            return JsonResponse({"error": "Not authorized"}, status=403)
+        course.delete()
+        return JsonResponse({"status": "ok"})
+    except Course.DoesNotExist:
+        return JsonResponse({"error": "Course not found"}, status=404)
+
 
 def sheet_detail(request, sheet_id):
     """
@@ -450,6 +475,8 @@ def sheet_detail(request, sheet_id):
         "id": sheet.id,
         "student_name": sheet.student_name,
         "university": sheet.university,
+        "faculty": sheet.faculty,
+        "department": sheet.department,
         "years_of_study": sheet.years_of_study,
         "semesters_per_year": sheet.semesters_per_year,
         "entry_year": sheet.entry_year,
@@ -492,6 +519,8 @@ def list_sheets(request):
             "id": sheet.id,
             "student_name": sheet.student_name,
             "university": sheet.university,
+            "faculty": sheet.faculty,
+            "department": sheet.department,
             "years_of_study": sheet.years_of_study,
             "semesters_per_year": sheet.semesters_per_year,
             "entry_year": sheet.entry_year,
