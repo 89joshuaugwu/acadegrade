@@ -203,6 +203,7 @@
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
       showToast("✅ Account created successfully!", "success");
+      syncFirebaseLoginWithDjango();
       await syncUserToBackend(userCredential.user); // Sync with Django backend
       bootstrap.Modal.getInstance(document.getElementById("authModal")).hide();
     } catch (error) {
@@ -221,6 +222,7 @@
       // Sign in user
       const loginUser =await signInWithEmailAndPassword(auth, email, password);
       showToast("✅ Signed in successfully!", "success");
+      syncFirebaseLoginWithDjango();
       await syncUserToBackend(loginUser.user); // Sync with Django backend
       bootstrap.Modal.getInstance(document.getElementById("authModal")).hide();
     } catch (error) {
@@ -233,6 +235,7 @@
     try {
       const googleUser = await signInWithPopup(auth, provider);
       showToast("✅ Google login successful!", "success");
+      syncFirebaseLoginWithDjango()
       await syncUserToBackend(googleUser.user); // Sync with Django backend
       bootstrap.Modal.getInstance(document.getElementById("authModal")).hide();
     } catch (error) {

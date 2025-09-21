@@ -1,3 +1,7 @@
+# --- Firebase login sync for Django session ---
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+
 # acadegradecore/views.py
 from django.shortcuts import render
 
@@ -119,6 +123,24 @@ def contact(request):
 
     return render(request, "contact.html", {"status": status, "name": name})
 
+
+
+@csrf_exempt
+def firebase_login_sync(request):
+    if request.method == "POST":
+        id_token = request.POST.get("idToken")
+        try:
+            decoded_token = firebase_auth.verify_id_token(id_token)
+            email = decoded_token.get("email")
+            uid = decoded_token.get("uid")
+            # Get or create Django user
+            user, created = User.objects.get_or_create(username=uid, defaults={"email": email})
+            # Log in user
+            login(request, user)
+            return JsonResponse({"success": True})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+    return JsonResponse({"error": "Invalid request"}, status=405)
 
 def verify_firebase_token(request):
     """Verify Firebase ID token from Authorization header."""
