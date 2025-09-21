@@ -167,7 +167,7 @@
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050">
         <div id="resultToast" class="toast align-items-center border-0" role="alert">
             <div class="d-flex">
-                <div class="toast-body" id="toastMessage">Your CGPA is calculated!</div>
+                <div class="toast-body" id="toastMessageResult">Your CGPA is calculated!</div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
@@ -177,7 +177,7 @@
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
   <div id="globalToast" class="toast align-items-center border-0 text-bg-primary" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="d-flex">
-      <div class="toast-body" id="toastMessage">Placeholder</div>
+      <div class="toast-body" id="toastMessageGlobal">Placeholder</div>
       <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
     </div>
   </div>
@@ -352,7 +352,7 @@ onAuthStateChanged(auth, (user) => {
 
    function showToast(message, type = "primary") {
     const toastEl = document.getElementById("globalToast");
-    const toastBody = document.getElementById("toastMessage");
+    const toastBody = document.getElementById("toastMessageGlobal");
 
     // Change color by type
     toastEl.className = `toast align-items-center border-0 text-bg-${type}`;

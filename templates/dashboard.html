@@ -2,83 +2,82 @@
 {% block title %}Dashboard | AcadeGrade{% endblock %}
 
 {% block content %}
-<main class="container py-4" role="main">
-  <section class="hero" aria-label="Welcome">
-    <div class="card border-0 rounded-4 shadow-lg mb-4" style="background: var(--primary-gradient);">
-      <div class="card-body p-4 text-white">
-        <div class="d-flex align-items-center justify-content-between">
-          <div class="flex-grow-1">
-            <h1 class="fw-bold mb-2">
-              <i class="bi bi-person-circle me-2" aria-hidden="true"></i>
-              Welcome back, <span id="userName">Student</span>
-            </h1>
-            <p class="mb-0 opacity-90">Track, calculate, and manage your CGPA across semesters and years effortlessly.</p>
-          </div>
-          <div class="d-none d-lg-block">
-            <img src="/static/images/mortarboard-fill.png" alt="AcadeGrade logo" style="width: 48px; opacity: 0.3;" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+<div class="container py-4">
 
-  <section class="quick-stats" aria-label="Quick Stats">
-    <div class="row mb-4" id="quickStats">
-      <div class="col-12 col-md-4 mb-3" data-aos="fade-up">
-        <div class="stat-card" aria-label="Total Sheets">
-          <div class="stat-icon" style="background: var(--info);">
-            <i class="bi bi-journal-text" aria-hidden="true"></i>
-          </div>
-          <div class="stat-value text-primary" id="statTotalSheets">
-            <div class="loading-skeleton" style="width: 40px; height: 32px; margin: 0 auto;"></div>
-          </div>
-          <div class="stat-label">Total Sheets</div>
+  <!-- Hero / Welcome -->
+  <div class="card border-0 rounded-4 shadow-lg mb-4" style="background: var(--primary-gradient);">
+    <div class="card-body p-4 text-white">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="flex-grow-1">
+          <h2 class="fw-bold mb-2">
+            <i class="bi bi-person-circle me-2"></i>
+            Welcome back, <span id="userName">Student</span>
+          </h2>
+          <p class="mb-0 opacity-90">Track, calculate, and manage your CGPA across semesters and years effortlessly.</p>
         </div>
-      </div>
-      <div class="col-12 col-md-4 mb-3" data-aos="fade-up" data-aos-delay="100">
-        <div class="stat-card text-center" aria-label="Average CGPA">
-          <div class="cgpa-circle mx-auto" id="avgCgpaCircle">
-            <svg viewBox="0 0 100 100" aria-label="Average CGPA">
-              <circle class="circle-bg" cx="50" cy="50" r="42"></circle>
-              <circle class="circle-progress" cx="50" cy="50" r="42" 
-                      stroke-dasharray="0 264" id="avgCgpaProgress"></circle>
-            </svg>
-            <div class="circle-text">
-              <div class="stat-value text-success" id="statAvgCgpa">
-                <div class="loading-skeleton" style="width: 30px; height: 24px; margin: 0 auto;"></div>
-              </div>
-            </div>
-          </div>
-          <div class="stat-label mt-2">Average CGPA</div>
-          <div class="cgpa-indicator mt-2" id="avgCgpaIndicator" style="display: none;">
-            <i class="bi bi-circle-fill" aria-hidden="true"></i>
-            <span id="avgCgpaStatus">-</span>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-4 mb-3" data-aos="fade-up" data-aos-delay="200">
-        <div class="stat-card text-center" aria-label="Best CGPA">
-          <div class="cgpa-circle mx-auto" id="bestCgpaCircle">
-            <svg viewBox="0 0 100 100" aria-label="Best CGPA">
-              <circle class="circle-bg" cx="50" cy="50" r="42"></circle>
-              <circle class="circle-progress" cx="50" cy="50" r="42" 
-                      stroke-dasharray="0 264" id="bestCgpaProgress"></circle>
-            </svg>
-            <div class="circle-text">
-              <div class="stat-value" style="color: var(--secondary-color);" id="statBestCgpa">
-                <div class="loading-skeleton" style="width: 30px; height: 24px; margin: 0 auto;"></div>
-              </div>
-            </div>
-          </div>
-          <div class="stat-label mt-2">Best CGPA</div>
-          <div class="cgpa-indicator mt-2" id="bestCgpaIndicator" style="display: none;">
-            <i class="bi bi-trophy-fill" aria-hidden="true"></i>
-            <span id="bestCgpaStatus">-</span>
-          </div>
+        <div class="d-none d-lg-block">
+          <i class="bi bi-mortarboard-fill" style="font-size: 3rem; opacity: 0.3;"></i>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="row mb-4" id="quickStats">
+    <div class="col-12 col-md-4 mb-3" data-aos="fade-up">
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--info);">
+          <i class="bi bi-journal-text"></i>
+        </div>
+        <div class="stat-value text-primary" id="statTotalSheets">
+          <div class="loading-skeleton" style="width: 40px; height: 32px; margin: 0 auto;"></div>
+        </div>
+        <div class="stat-label">Total Sheets</div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4 mb-3" data-aos="fade-up" data-aos-delay="100">
+      <div class="stat-card text-center">
+        <div class="cgpa-circle mx-auto" id="avgCgpaCircle">
+          <svg viewBox="0 0 100 100">
+            <circle class="circle-bg" cx="50" cy="50" r="42"></circle>
+            <circle class="circle-progress" cx="50" cy="50" r="42" 
+                    stroke-dasharray="0 264" id="avgCgpaProgress"></circle>
+          </svg>
+          <div class="circle-text">
+            <div class="stat-value text-success" id="statAvgCgpa">
+              <div class="loading-skeleton" style="width: 30px; height: 24px; margin: 0 auto;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="stat-label mt-2">Average CGPA</div>
+        <div class="cgpa-indicator mt-2" id="avgCgpaIndicator" style="display: none;">
+          <i class="bi bi-circle-fill"></i>
+          <span id="avgCgpaStatus">-</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4 mb-3" data-aos="fade-up" data-aos-delay="200">
+      <div class="stat-card text-center">
+        <div class="cgpa-circle mx-auto" id="bestCgpaCircle">
+          <svg viewBox="0 0 100 100">
+            <circle class="circle-bg" cx="50" cy="50" r="42"></circle>
+            <circle class="circle-progress" cx="50" cy="50" r="42" 
+                    stroke-dasharray="0 264" id="bestCgpaProgress"></circle>
+          </svg>
+          <div class="circle-text">
+            <div class="stat-value" style="color: var(--secondary-color);" id="statBestCgpa">
+              <div class="loading-skeleton" style="width: 30px; height: 24px; margin: 0 auto;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="stat-label mt-2">Best CGPA</div>
+        <div class="cgpa-indicator mt-2" id="bestCgpaIndicator" style="display: none;">
+          <i class="bi bi-trophy-fill"></i>
+          <span id="bestCgpaStatus">-</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Action Buttons -->
   <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center mb-4 gap-3">
