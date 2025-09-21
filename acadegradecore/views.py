@@ -294,7 +294,17 @@ def create_sheet(request):
 
             for sidx in range(1, semesters_per_year+1):
                 sem_label = f"{sidx}{'st' if sidx==1 else 'nd' if sidx==2 else 'th'} Semester"
-                Semester.objects.create(year=year_obj, index=sidx, label=sem_label)
+                sem_obj = Semester.objects.create(year=year_obj, index=sidx, label=sem_label)
+                # If mode is 'zeros', auto-create 1 zeroed course per semester
+                if sheet.mode == 'zeros':
+                    Course.objects.create(
+                        semester=sem_obj,
+                        code=f"C code 1",
+                        title=f"C title 1",
+                        credit_unit=1,
+                        incourse=0,
+                        exam=0
+                    )
 
         return JsonResponse({"status":"ok","sheet_id": sheet.id})
 
@@ -387,6 +397,64 @@ def add_course(request):
         return JsonResponse({"status":"ok","course_id": c.id})
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+
+# --- Batch Course API ---
+@csrf_exempt
+def get_semester_courses(request, semester_id):
+    """
+    GET /api/semester/<id>/courses/
+    Returns all courses for a semester (for batch modal)
+    """
+    if request.method != "GET":
+        return JsonResponse({"error": "GET only"}, status=405)
+    try:
+        sem = Semester.objects.get(id=semester_id)
+        courses = [
+            {
+                "id": c.id,
+                "code": c.code,
+                "title": c.title,
+                "credit_unit": c.credit_unit,
+                "incourse": c.incourse,
+                "exam": c.exam
+            }
+            for c in sem.courses.all()
+        ]
+        return JsonResponse({"courses": courses})
+    except Semester.DoesNotExist:
+        return JsonResponse({"courses": []})
+
+@csrf_exempt
+def batch_add_courses(request):
+    """
+    POST /api/batch-add-courses/
+    JSON: { "semester_id": <id>, "courses": [ {...}, ... ] }
+    Adds/replaces all courses for a semester.
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "POST only"}, status=405)
+    try:
+        payload = json.loads(request.body)
+        semester_id = int(payload.get("semester_id"))
+        courses_data = payload.get("courses", [])
+        sem = Semester.objects.get(id=semester_id)
+        # Remove existing courses (for replace semantics)
+        sem.courses.all().delete()
+        # Add new courses
+        for cdata in courses_data:
+            Course.objects.create(
+                semester=sem,
+                code=cdata.get("code", ""),
+                title=cdata.get("title", ""),
+                credit_unit=int(cdata.get("credit_unit", 0)),
+                incourse=int(cdata.get("incourse", 0)),
+                exam=int(cdata.get("exam", 0))
+            )
+        return JsonResponse({"status": "ok"})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
 
 @csrf_exempt
 def course_detail(request, course_id):

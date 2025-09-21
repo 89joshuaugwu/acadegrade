@@ -1,4 +1,194 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // ----------------- BATCH COURSE ENTRY -----------------
+  const batchCourseModal = new bootstrap.Modal(document.getElementById('batchCourseModal'));
+  const batchCourseForm = document.getElementById('batchCourseForm');
+  const batchCourseTable = document.getElementById('batchCourseTable').getElementsByTagName('tbody')[0];
+  const addBatchRowBtn = document.getElementById('addBatchRowBtn');
+  const saveBatchCoursesBtn = document.getElementById('saveBatchCoursesBtn');
+
+  // Helper to create a table row
+  function createBatchRow(values = {}, index = 1, mode = "available") {
+    // Pre-fill code/title if not present
+    const code = values.code || `C code ${index}`;
+    const title = values.title || `C title ${index}`;
+    const credit_unit = values.credit_unit || 1;
+    const incourse = (mode === "zeros") ? (values.incourse ?? 0) : (values.incourse ?? "");
+    const exam = (mode === "zeros") ? (values.exam ?? 0) : (values.exam ?? "");
+    const required = (mode === "zeros") ? "required" : "";
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><input type="text" class="form-control" name="code" value="${code}" ${required}></td>
+      <td><input type="text" class="form-control" name="title" value="${title}" ${required}></td>
+      <td><input type="number" class="form-control" name="credit_unit" min="1" max="6" value="${credit_unit}" ${required}></td>
+      <td><input type="number" class="form-control" name="incourse" min="0" max="40" value="${incourse}" ${required}></td>
+      <td><input type="number" class="form-control" name="exam" min="0" max="70" value="${exam}" ${required}></td>
+      <td><button type="button" class="btn btn-outline-danger btn-sm removeBatchRowBtn"><i class="bi bi-trash"></i></button></td>
+    `;
+    return row;
+  }
+
+  // Add initial rows
+  function populateBatchTable(initialRows = 5) {
+    batchCourseTable.innerHTML = '';
+    for (let i = 0; i < initialRows; i++) {
+      batchCourseTable.appendChild(createBatchRow());
+    }
+  }
+
+  // Add row button handler
+  addBatchRowBtn.addEventListener('click', () => {
+    // Find the next index for placeholder numbering
+    let maxIndex = 0;
+    Array.from(batchCourseTable.rows).forEach(row => {
+      const codeInput = row.querySelector('input[name="code"]');
+      if (codeInput && codeInput.value.startsWith('C code ')) {
+        const num = parseInt(codeInput.value.replace('C code ', ''));
+        if (!isNaN(num) && num > maxIndex) maxIndex = num;
+      }
+    });
+    const nextIndex = maxIndex + 1;
+    batchCourseTable.appendChild(createBatchRow({}, nextIndex));
+  });
+
+    // Remove row handler (delegated)
+    batchCourseTable.addEventListener('click', (e) => {
+      if (e.target.closest('.removeBatchRowBtn')) {
+        const row = e.target.closest('tr');
+        // Determine mode for this batch modal
+        let mode = "available";
+        const semesterId = document.getElementById('batchCourseSemesterId').value;
+        const sheetCard = document.querySelector(`[data-id='${semesterId}']`);
+        if (sheetCard && sheetCard.closest('.card')) {
+          const modeBadge = sheetCard.closest('.card').querySelector('.badge');
+          if (modeBadge && modeBadge.textContent.toLowerCase().includes('build')) {
+            mode = "zeros";
+          }
+        }
+        // In 'zeros' mode, prevent deleting last course
+        if (mode === "zeros" && batchCourseTable.rows.length === 1) {
+          showToast('Cannot delete the last course in this semester (All 0s mode).', 'warning');
+          return;
+        }
+        if (batchCourseTable.rows.length > 1) {
+          row.remove();
+        } else {
+          showToast('At least one row is required.', 'warning');
+        }
+      }
+    });
+
+  // Open batch modal from semester card
+  async function openBatchCourseModal(semesterId, semesterLabel) {
+    document.getElementById('batchCourseSemesterId').value = semesterId;
+    document.getElementById('batchCourseModalLabel').innerText = `Batch Add Courses - ${semesterLabel}`;
+
+    // Determine mode for this sheet/semester
+    let mode = "available";
+    // Try to get mode from the sheet card (if available)
+    const sheetCard = document.querySelector(`[data-id='${semesterId}']`);
+    if (sheetCard && sheetCard.closest('.card')) {
+      const modeBadge = sheetCard.closest('.card').querySelector('.badge');
+      if (modeBadge && modeBadge.textContent.toLowerCase().includes('build')) {
+        mode = "zeros";
+      }
+    }
+
+    // Fetch existing courses for this semester
+    let existingCourses = [];
+    try {
+      const res = await fetch(`/api/semester/${semesterId}/courses/`);
+      const data = await res.json();
+      if (Array.isArray(data.courses)) {
+        existingCourses = data.courses;
+      }
+    } catch (error) {
+      existingCourses = [];
+    }
+
+    // Fill table: existing courses first, then empty rows with incrementing code/title
+    batchCourseTable.innerHTML = '';
+    let nextIndex = existingCourses.length + 1;
+    existingCourses.forEach((course, idx) => {
+      batchCourseTable.appendChild(createBatchRow(course, idx + 1, mode));
+    });
+    const emptyRows = Math.max(5 - existingCourses.length, 1);
+    for (let i = 0; i < emptyRows; i++) {
+      batchCourseTable.appendChild(createBatchRow({}, nextIndex + i, mode));
+    }
+    batchCourseModal.show();
+  }
+
+  // Handle batch form submission
+  batchCourseForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setButtonLoading('saveBatchCoursesBtn', true);
+    const semesterId = document.getElementById('batchCourseSemesterId').value;
+    const rows = Array.from(batchCourseTable.rows);
+
+    // Determine mode for validation
+    let mode = "available";
+    const sheetCard = document.querySelector(`[data-id='${semesterId}']`);
+    if (sheetCard && sheetCard.closest('.card')) {
+      const modeBadge = sheetCard.closest('.card').querySelector('.badge');
+      if (modeBadge && modeBadge.textContent.toLowerCase().includes('build')) {
+        mode = "zeros";
+      }
+    }
+
+    let courses = rows.map((row, idx) => {
+      return {
+        code: row.querySelector('input[name="code"]').value.trim(),
+        title: row.querySelector('input[name="title"]').value.trim(),
+        credit_unit: row.querySelector('input[name="credit_unit"]').value,
+        incourse: row.querySelector('input[name="incourse"]').value,
+        exam: row.querySelector('input[name="exam"]').value
+      };
+    });
+
+    // Validation per mode
+    if (mode === "zeros") {
+      // All fields required
+      courses = courses.filter(c => c.code && c.title && c.credit_unit && c.incourse !== "" && c.exam !== "");
+      if (courses.length === 0) {
+        showToast('Please fill all fields for each course.', 'warning');
+        setButtonLoading('saveBatchCoursesBtn', false);
+        return;
+      }
+    } else {
+      // Only include courses with both incourse and exam for GPA/CGPA
+      courses = courses.filter(c => c.code && c.title);
+      // Allow incomplete fields, but warn if all are empty
+      if (courses.length === 0) {
+        showToast('Please enter at least one valid course.', 'warning');
+        setButtonLoading('saveBatchCoursesBtn', false);
+        return;
+      }
+    }
+
+    try {
+      const payload = {
+        semester_id: semesterId,
+        courses: courses
+      };
+      const res = await fetch('/api/batch-add-courses/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.status === 'ok') {
+        batchCourseModal.hide();
+        showToast('Courses added successfully!', 'success');
+        loadSheets();
+      } else {
+        showToast('Error: ' + (data.error || 'unknown'), 'danger');
+      }
+    } catch (error) {
+      showToast('Network error. Please try again.', 'danger');
+    } finally {
+      setButtonLoading('saveBatchCoursesBtn', false);
+    }
+  });
   // Wait for UID to be set before loading sheets
   function waitForUidAndLoadSheets(retries = 20) {
     if (window.currentUserUid) {
@@ -461,6 +651,23 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById("semesterModalTitle").innerText = btn.dataset.label;
         new bootstrap.Modal(document.getElementById("semesterModal")).show();
       });
+    });
+
+    // BATCH ADD COURSES BUTTON
+    document.querySelectorAll(".addCourseBtn").forEach(btn => {
+      // Add a batch button next to single add (if not already present)
+      const parent = btn.parentElement;
+      if (!parent.querySelector('.batchAddCourseBtn')) {
+        const batchBtn = document.createElement('button');
+        batchBtn.className = 'btn btn-sm btn-outline-success batchAddCourseBtn ms-1';
+        batchBtn.innerHTML = '<i class="bi bi-table"></i> Batch Add';
+        batchBtn.setAttribute('data-id', btn.dataset.id);
+        batchBtn.setAttribute('data-label', btn.dataset.label);
+        batchBtn.addEventListener('click', () => {
+          openBatchCourseModal(btn.dataset.id, btn.dataset.label);
+        });
+        parent.appendChild(batchBtn);
+      }
     });
 
         // DELETE COURSE

@@ -268,7 +268,7 @@
   </div>
 </div>
 
-<!-- Semester Modal -->
+<!-- Semester Modal (Single Entry) -->
 <div class="modal fade" id="semesterModal" tabindex="-1" aria-labelledby="semesterModalLabel">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-fullscreen-md-down">
     <div class="modal-content rounded-4 shadow-lg border-0">
@@ -323,6 +323,55 @@
           </div>
         </form>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Batch Course Entry Modal -->
+<div class="modal fade" id="batchCourseModal" tabindex="-1" aria-labelledby="batchCourseModalLabel">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-fullscreen-md-down">
+    <div class="modal-content rounded-4 shadow-lg border-0">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold" id="batchCourseModalLabel">
+          <i class="bi bi-table me-2 text-primary"></i>
+          Batch Add Courses
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="batchCourseForm" class="modal-body pt-2">
+        <input type="hidden" name="semester_id" id="batchCourseSemesterId">
+        <div class="table-responsive mb-3">
+          <table class="table table-bordered align-middle" id="batchCourseTable">
+            <thead class="table-light">
+              <tr>
+                <th>Code</th>
+                <th>Title</th>
+                <th>Credit Unit</th>
+                <th>CA</th>
+                <th>Exam</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Rows will be generated dynamically by JS -->
+            </tbody>
+          </table>
+        </div>
+        <div class="d-flex justify-content-between mb-3">
+          <button type="button" class="btn btn-outline-success" id="addBatchRowBtn">
+            <i class="bi bi-plus-circle me-1"></i> Add Row
+          </button>
+          <button type="submit" class="btn btn-primary" id="saveBatchCoursesBtn">
+            <span class="btn-loading d-none">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Saving...
+            </span>
+            <span class="btn-text">
+              <i class="bi bi-check-circle me-1"></i> Save All Courses
+            </span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

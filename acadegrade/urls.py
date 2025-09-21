@@ -42,4 +42,6 @@ urlpatterns = [
     path("api/update-course/<int:course_id>/", views.update_course, name="update_course"),
     path("api/delete-course/<int:course_id>/", views.delete_course, name="delete_course"),
     path("api/sheet/<int:sheet_id>/pdf/", views.export_pdf, name="export_pdf"),
+    path('api/semester/<int:semester_id>/courses/', views.get_semester_courses, name='get_semester_courses'),
+    path('api/batch-add-courses/', views.batch_add_courses, name='batch_add_courses'),
 ]
