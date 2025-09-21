@@ -245,13 +245,22 @@
 
   // Google Login
   document.getElementById("googleLogin")?.addEventListener("click", async () => {
+    const googleLoginBtn = document.getElementById("googleLogin");
+    if (googleLoginBtn.disabled) return; // Debounce: prevent multiple clicks
+    googleLoginBtn.disabled = true;
     try {
       const googleUser = await signInWithPopup(auth, provider);
       showToast("✅ Google login successful!", "success");
       await syncUserToBackend(googleUser.user); // Sync with Django backend
       bootstrap.Modal.getInstance(document.getElementById("authModal")).hide();
     } catch (error) {
-      showToast("❌ " + error.message, "danger");
+      if (error.code === "auth/popup-closed-by-user") {
+        showToast("❌ Google sign-in popup was closed. This may be due to a popup blocker, browser settings, or a network issue. Please try again and ensure popups are allowed.", "danger");
+      } else {
+        showToast("❌ " + error.message, "danger");
+      }
+    } finally {
+      googleLoginBtn.disabled = false;
     }
   });
 
