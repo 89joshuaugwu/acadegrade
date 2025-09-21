@@ -335,8 +335,24 @@ def update_sheet(request, sheet_id):
         sheet.faculty = payload.get("faculty", sheet.faculty)
         sheet.department = payload.get("department", sheet.department)
         sheet.entry_year = payload.get("entry_year", sheet.entry_year)
-        sheet.mode = payload.get("mode", sheet.mode)
+        prev_mode = sheet.mode
+        new_mode = payload.get("mode", sheet.mode)
+        sheet.mode = new_mode
         sheet.save()
+
+        # If switching to 'zeros' mode, ensure every semester has at least one zeroed course
+        if prev_mode != "zeros" and new_mode == "zeros":
+            for year in sheet.years.all():
+                for sem in year.semesters.all():
+                    if sem.courses.count() == 0:
+                        Course.objects.create(
+                            semester=sem,
+                            code=f"C code 1",
+                            title=f"C title 1",
+                            credit_unit=1,
+                            incourse=0,
+                            exam=0
+                        )
 
         return JsonResponse({"status": "ok"})
     except ResultSheet.DoesNotExist:
@@ -528,6 +544,12 @@ def delete_course(request, course_id):
         # Check ownership via course.semester.year.sheet.owner.uid
         if course.semester.year.sheet.owner.uid != uid:
             return JsonResponse({"error": "Not authorized"}, status=403)
+        sheet = course.semester.year.sheet
+        semester = course.semester
+        if sheet.mode == "zeros":
+            course_count = semester.courses.count()
+            if course_count <= 1:
+                return JsonResponse({"error": "Cannot delete the last course in this semester (All 0s mode)."}, status=403)
         course.delete()
         return JsonResponse({"status": "ok"})
     except Course.DoesNotExist:
@@ -619,114 +641,150 @@ def delete_sheet(request, sheet_id):
 
 
 def export_pdf(request, sheet_id):
-    # Fetch the sheet
+    from reportlab.platypus import Image
+    from datetime import datetime
     sheet = ResultSheet.objects.get(id=sheet_id)
+    semester_id = request.GET.get('semester_id')
 
-    # Prepare response
     response = HttpResponse(content_type="application/pdf")
-    response["Content-Disposition"] = f'attachment; filename="ResultSheet_{sheet.student_name}.pdf"'
+    filename = f'ResultSheet_{sheet.student_name}.pdf'
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
 
-    # Create PDF
-    doc = SimpleDocTemplate(response, pagesize=A4)
+    doc = SimpleDocTemplate(response, pagesize=A4, rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=30)
     styles = getSampleStyleSheet()
     story = []
 
-    # --- Branding header ---
+    # --- Branding header with logo ---
+    logo_path = os.path.join('static', 'images', 'mortarboard-fill.png')
+    if os.path.exists(logo_path):
+        story.append(Image(logo_path, width=40, height=40))
     title_style = ParagraphStyle(
         "title",
         parent=styles["Heading1"],
         alignment=1,
-        fontSize=18,
-        spaceAfter=12,
+        fontSize=22,
+        textColor=colors.HexColor("#007bff"),
+        spaceAfter=8,
     )
-    story.append(Paragraph("🎓 AcadeGrade", title_style))
-    story.append(Spacer(1, 12))
+    story.append(Paragraph("AcadeGrade Result Sheet", title_style))
+    story.append(Spacer(1, 8))
 
-    # --- Student info ---
-    info = f"""
-    <b>Student:</b> {sheet.student_name}<br/>
-    <b>University:</b> {sheet.university or '-'}<br/>
-    <b>Faculty:</b> {sheet.faculty or '-'}<br/>
-    <b>Department:</b> {sheet.department or '-'}<br/>
-    <b>Entry Year:</b> {sheet.entry_year}<br/>
-    <b>Years of Study:</b> {sheet.years_of_study} <br/>
-    <b>Semesters/Year:</b> {sheet.semesters_per_year} <br/>
-    <b>Mode:</b> {"Build-up (Zeros)" if sheet.mode == "zeros" else "Availability"}<br/>
-    """
-    story.append(Paragraph(info, styles["Normal"]))
-    story.append(Spacer(1, 12))
+    # --- Student info box with improved labels ---
+    info_style = ParagraphStyle(
+        "info",
+        parent=styles["Normal"],
+        fontSize=12,
+        textColor=colors.HexColor("#333333"),
+        spaceAfter=6,
+        leftIndent=10,
+    )
+    found_sem = None
+    found_year = None
+    if semester_id:
+        # For single semester, show year/semester label
+        for year in sheet.years.all():
+            for sem in year.semesters.all():
+                if str(sem.id) == str(semester_id):
+                    found_sem = sem
+                    found_year = year
+        year_or_sem_label = f"Year of Semester: {found_year.year_label} | Semester: {found_sem.label}" if found_year and found_sem else "-"
+    else:
+        year_or_sem_label = f"Year of Entry: {sheet.entry_year}"
 
-    # --- Year by year breakdown ---
-    years = {}
-    for semester in sheet.semester_set.all().order_by("id"):
-        year_index = (semester.index // sheet.semesters_per_year) + 1
-        years.setdefault(year_index, []).append(semester)
+    info_lines = [
+        f"<b>Student Name:</b> {sheet.student_name}",
+        f"<b>Institution:</b> {sheet.university or '-'}",
+        f"<b>Faculty:</b> {sheet.faculty or '-'}",
+        f"<b>Department:</b> {sheet.department or '-'}",
+        f"<b>{year_or_sem_label}</b>",
+        f"<b>Years of Study:</b> {sheet.years_of_study}",
+        f"<b>Semesters/Year:</b> {sheet.semesters_per_year}",
+        f"<b>Mode:</b> {'Build-up (Zeros)' if sheet.mode == 'zeros' else 'Availability'}",
+    ]
+    for line in info_lines:
+        story.append(Paragraph(line, info_style))
+    story.append(Spacer(1, 10))
 
-    for year, semesters in years.items():
-        # Year heading
-        story.append(Paragraph(f"<b>Year {year}</b>", styles["Heading2"]))
-        story.append(Spacer(1, 6))
+    def render_courses_table(courses):
+        table_data = [["Code", "Title", "Credit Unit", "CA", "Exam", "Score", "Grade", "Grade Point"]]
+        for c in courses:
+            table_data.append([
+                c.code, c.title, c.credit_unit, c.incourse, c.exam, getattr(c, 'score', ''), getattr(c, 'grade', ''), getattr(c, 'grade_point', '')
+            ])
+        t = Table(table_data, repeatRows=1, hAlign='CENTER', colWidths=[55, 120, 55, 40, 40, 45, 45, 55])
+        t.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#007bff')),
+            ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+            ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+            ('FONTNAME', (0,1), (-1,-1), 'Helvetica'),
+            ('FONTSIZE', (0,0), (-1,-1), 10),
+            ('BOTTOMPADDING', (0,0), (-1,0), 10),
+            ('TOPPADDING', (0,0), (-1,0), 8),
+            ('GRID', (0,0), (-1,-1), 0.7, colors.HexColor('#cccccc')),
+            ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.whitesmoke, colors.lightgrey]),
+        ]))
+        return t
 
-        year_total_points = 0
-        year_total_units = 0
-
-        for sem in semesters:
-            story.append(Paragraph(f"<u>{sem.label}</u>", styles["Heading3"]))
-            table_data = [["Code", "Title", "Unit", "Score", "Grade"]]
-
-            sem_total_points = 0
-            sem_total_units = 0
-
-            for course in sem.course_set.all():
-                table_data.append([
-                    course.code,
-                    course.title,
-                    str(course.credit_unit),
-                    str(course.score),
-                    course.grade,
-                ])
-                sem_total_units += course.credit_unit
-                sem_total_points += course.credit_unit * course.grade_point
-
-            # Add semester table
-            table = Table(table_data, hAlign="LEFT")
-            table.setStyle(TableStyle([
-                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#0d6efd")),
-                ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
-                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-                ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
-                ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
-            ]))
-            story.append(table)
-
-            # Semester GPA
-            sem_gpa = sem_total_points / sem_total_units if sem_total_units else 0
-            story.append(Paragraph(f"<b>Semester GPA:</b> {sem_gpa:.2f}", styles["Normal"]))
+    if semester_id:
+        # Export single semester
+        if found_sem and found_year:
+            story.append(Paragraph(f"<b>{found_year.year_label} - {found_sem.label}</b>", styles["Heading2"]))
             story.append(Spacer(1, 6))
-
-            year_total_points += sem_total_points
-            year_total_units += sem_total_units
-
-        # Year GPA summary
-        year_gpa = year_total_points / year_total_units if year_total_units else 0
-        story.append(Paragraph(f"<b>Year {year} GPA:</b> {year_gpa:.2f}", styles["Heading3"]))
+            story.append(render_courses_table(found_sem.courses.all()))
+            story.append(Spacer(1, 10))
+            # --- Analysis section for semester ---
+            analysis_style = ParagraphStyle(
+                "analysis",
+                parent=styles["Normal"],
+                fontSize=12,
+                textColor=colors.HexColor("#007bff"),
+                spaceAfter=6,
+                leftIndent=10,
+            )
+            gpa = getattr(found_sem, "gpa", None)
+            story.append(Paragraph(f"<b>Analysis:</b>", analysis_style))
+            story.append(Paragraph(f"Semester GPA: {gpa:.2f}" if gpa is not None else "Semester GPA: -", analysis_style))
+            story.append(Paragraph(f"Mode: {'Build-up (Zeros)' if sheet.mode == 'zeros' else 'Availability'}", analysis_style))
+        else:
+            story.append(Paragraph("Semester not found.", styles["Normal"]))
+    else:
+        # Export whole sheet
+        story.append(Paragraph(f"<b>Entry Year:</b> {sheet.entry_year}", styles["Normal"]))
+        for year in sheet.years.all():
+            story.append(Paragraph(f"<b>{year.year_label}</b>", styles["Heading2"]))
+            for sem in year.semesters.all():
+                story.append(Paragraph(f"<b>{sem.label}</b>", styles["Heading3"]))
+                story.append(render_courses_table(sem.courses.all()))
+                story.append(Spacer(1, 6))
         story.append(Spacer(1, 12))
+        # --- Analysis section for full sheet ---
+        analysis_style = ParagraphStyle(
+            "analysis",
+            parent=styles["Normal"],
+            fontSize=12,
+            textColor=colors.HexColor("#007bff"),
+            spaceAfter=6,
+            leftIndent=10,
+        )
+        cgpa = getattr(sheet, "cgpa", 0.0)
+        story.append(Paragraph(f"<b>Analysis:</b>", analysis_style))
+        story.append(Paragraph(f"Total CGPA: {cgpa:.2f}", analysis_style))
+        story.append(Paragraph(f"Mode: {'Build-up (Zeros)' if sheet.mode == 'zeros' else 'Availability'}", analysis_style))
 
-    # --- Overall CGPA ---
-    cgpa = getattr(sheet, "cgpa", 0.0)
-    story.append(Paragraph(f"<b>Total CGPA:</b> {cgpa:.2f}", styles["Heading2"]))
+    # --- Footer ---
+    story.append(Spacer(1, 18))
+    footer_style = ParagraphStyle(
+        "footer",
+        parent=styles["Normal"],
+        alignment=1,
+        fontSize=10,
+        textColor=colors.HexColor("#888888"),
+    )
+    story.append(Paragraph(f"Generated by AcadeGrade | {datetime.now().strftime('%Y-%m-%d %H:%M')}", footer_style))
 
-    # Build document
     doc.build(story)
     return response
-
-
-
-
-
-
-
 
 
 
