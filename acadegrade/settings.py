@@ -27,10 +27,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-jq(!^$j0-2mm27#&g8m7v9av2bc=lpgovk#iw+qlgqh6*lwd(#'
 
+import sys
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-ALLOWED_HOSTS = ["acadegrade.onrender.com"]
+if config("RENDER", default=False, cast=bool):
+    DEBUG = False  # Production: turn off debug
+    ALLOWED_HOSTS = ["acadegrade.onrender.com"]
+else:
+    DEBUG = True  # Local development
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "*",]
 
 
 # Application definition
@@ -80,20 +84,18 @@ WSGI_APPLICATION = 'acadegrade.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-import dj_database_url
-from decouple import config
-
 if config("RENDER", default=False, cast=bool):
     # 🔹 On Render → use Postgres
     DATABASES = {
         "default": dj_database_url.config(
             default=config("DATABASE_URL"),
             conn_max_age=600,
-            ssl_require=True,
+            ssl_require=True
         )
     }
 else:
     # 🔹 Local → use SQLite
+    # Uncomment for local development only
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -167,26 +169,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")  # ✅ Add this
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# -------------------------------------------------------------------
-# 🔥 Firebase Admin SDK Initialization
-# -------------------------------------------------------------------
-import json
-import firebase_admin
-from firebase_admin import credentials
-
-# Only initialize once
-if not firebase_admin._apps:
-    raw_service_account = config("FIREBASE_SERVICE_ACCOUNT", default=None)
-    if raw_service_account:
-        try:
-            service_account_info = json.loads(raw_service_account)
-            cred = credentials.Certificate(service_account_info)
-            firebase_admin.initialize_app(cred)
-            print("✅ Firebase Admin initialized")
-        except Exception as e:
-            print("❌ Firebase initialization failed:", e)
-    else:
-        print("⚠️ FIREBASE_SERVICE_ACCOUNT not found in environment")
 
 
 # -------------------------------------------------------------------
