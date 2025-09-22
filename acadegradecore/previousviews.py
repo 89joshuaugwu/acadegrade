@@ -294,17 +294,7 @@ def create_sheet(request):
 
             for sidx in range(1, semesters_per_year+1):
                 sem_label = f"{sidx}{'st' if sidx==1 else 'nd' if sidx==2 else 'th'} Semester"
-                sem_obj = Semester.objects.create(year=year_obj, index=sidx, label=sem_label)
-                # If mode is 'zeros', auto-create 1 zeroed course per semester
-                if sheet.mode == 'zeros':
-                    Course.objects.create(
-                        semester=sem_obj,
-                        code=f"C code 1",
-                        title=f"C title 1",
-                        credit_unit=1,
-                        incourse=0,
-                        exam=0
-                    )
+                Semester.objects.create(year=year_obj, index=sidx, label=sem_label)
 
         return JsonResponse({"status":"ok","sheet_id": sheet.id})
 
@@ -335,24 +325,8 @@ def update_sheet(request, sheet_id):
         sheet.faculty = payload.get("faculty", sheet.faculty)
         sheet.department = payload.get("department", sheet.department)
         sheet.entry_year = payload.get("entry_year", sheet.entry_year)
-        prev_mode = sheet.mode
-        new_mode = payload.get("mode", sheet.mode)
-        sheet.mode = new_mode
+        sheet.mode = payload.get("mode", sheet.mode)
         sheet.save()
-
-        # If switching to 'zeros' mode, ensure every semester has at least one zeroed course
-        if prev_mode != "zeros" and new_mode == "zeros":
-            for year in sheet.years.all():
-                for sem in year.semesters.all():
-                    if sem.courses.count() == 0:
-                        Course.objects.create(
-                            semester=sem,
-                            code=f"C code 1",
-                            title=f"C title 1",
-                            credit_unit=1,
-                            incourse=0,
-                            exam=0
-                        )
 
         return JsonResponse({"status": "ok"})
     except ResultSheet.DoesNotExist:
@@ -544,12 +518,6 @@ def delete_course(request, course_id):
         # Check ownership via course.semester.year.sheet.owner.uid
         if course.semester.year.sheet.owner.uid != uid:
             return JsonResponse({"error": "Not authorized"}, status=403)
-        sheet = course.semester.year.sheet
-        semester = course.semester
-        if sheet.mode == "zeros":
-            course_count = semester.courses.count()
-            if course_count <= 1:
-                return JsonResponse({"error": "Cannot delete the last course in this semester (All 0s mode)."}, status=403)
         course.delete()
         return JsonResponse({"status": "ok"})
     except Course.DoesNotExist:

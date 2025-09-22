@@ -87,10 +87,18 @@
       Your Result Sheets
     </h3>
     <div class="btn-group w-100 w-lg-auto" role="group">
-      <button class="btn btn-outline-secondary" id="printExportBtn">
+      <button class="btn btn-outline-secondary" id="printBtn">
         <i class="bi bi-printer me-1"></i> 
-        <span class="d-none d-sm-inline">Print/Export</span>
+        <span class="d-none d-sm-inline">Print</span>
       </button>
+      <button class="btn btn-outline-danger" id="pdfBtn">
+        <i class="bi bi-file-earmark-pdf me-1"></i> 
+        <span class="d-none d-sm-inline">Client PDF</span>
+      </button>
+      <a href="#" id="serverPdfBtn" class="btn btn-danger">
+        <i class="bi bi-download me-1"></i> 
+        <span class="d-none d-sm-inline">Export PDF</span>
+      </a>
       <button class="btn btn-primary" id="createSheetBtn">
         <span class="btn-loading d-none">
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -432,85 +440,6 @@
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <script src="{% static 'js/dashboard.js' %}"></script>
-
-<!-- Print/Export Modal -->
-<div class="modal fade" id="printExportModal" tabindex="-1" aria-labelledby="printExportModalLabel">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content rounded-4 shadow-lg border-0">
-      <div class="modal-header border-0 pb-0">
-        <h5 class="modal-title fw-bold" id="printExportModalLabel">
-          <i class="bi bi-printer me-2 text-primary"></i>
-          Print / Export Result Sheet
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form id="printExportForm" class="modal-body pt-2">
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Select Result Sheet</label>
-          <select class="form-select" id="printSheetSelect" required>
-            <option value="" disabled selected>Select a sheet...</option>
-            <!-- Sheets will be populated by JS -->
-          </select>
-        </div>
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Scope</label>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="printScope" id="scopeWhole" value="whole" checked>
-            <label class="form-check-label" for="scopeWhole">Whole Result Sheet (All Semesters)</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="printScope" id="scopeSemester" value="semester">
-            <label class="form-check-label" for="scopeSemester">Single Semester</label>
-          </div>
-        </div>
-        <div class="mb-3 d-none" id="semesterSelectGroup">
-          <label class="form-label fw-semibold">Select Year & Semester</label>
-          <select class="form-select" id="printSemesterSelect">
-            <option value="" disabled selected>Select semester...</option>
-            <!-- Semesters will be populated by JS -->
-          </select>
-        </div>
-        <div class="d-flex flex-column flex-sm-row justify-content-end gap-2 mt-4">
-          <button type="button" class="btn btn-outline-secondary order-2 order-sm-1" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary order-1 order-sm-2" id="printExportPreviewBtn">
-            <i class="bi bi-eye me-1"></i> Preview
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- Print/Export Preview Modal -->
-<div class="modal fade" id="printPreviewModal" tabindex="-1" aria-labelledby="printPreviewModalLabel">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content rounded-4 shadow-lg border-0">
-      <div class="modal-header border-0 pb-0">
-        <h5 class="modal-title fw-bold" id="printPreviewModalLabel">
-          <i class="bi bi-eye me-2 text-primary"></i>
-          Print Preview
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body pt-2" id="printPreviewContent">
-  <div id="printPreviewStudentInfo" class="mb-3"></div>
-  <div id="printPreviewResultTable" class="mb-3"></div>
-  <div id="printPreviewAnalysis" class="mt-4"></div>
-      </div>
-      <div class="modal-footer border-0">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="printPreviewPrintBtn">
-          <i class="bi bi-printer me-1"></i> Print
-        </button>
-        <button type="button" class="btn btn-danger" id="printPreviewPdfBtn">
-          <i class="bi bi-file-earmark-pdf me-1"></i> Export PDF
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 
 {% endblock %}
